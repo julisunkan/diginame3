@@ -27,6 +27,39 @@
   </div>
 </div>
 
+<div class="alert {{ 'alert-warning' if pending_reports else 'alert-light' }} d-flex justify-content-between align-items-center">
+  <span><i class="bi bi-flag me-2"></i><strong>{{ pending_reports }}</strong> pending content report{{ '' if pending_reports == 1 else 's' }}</span>
+  <span class="small text-muted">Review reports below</span>
+</div>
+<h5 class="fw-semibold mb-2">Content Reports</h5>
+<div class="card mb-4">
+  <div class="table-responsive">
+    <table class="table table-hover mb-0">
+      <thead class="table-light"><tr><th>Reason</th><th>Details</th><th>Status</th><th>Date</th><th>Decision</th></tr></thead>
+      <tbody>
+      {% for report in reports %}
+      <tr>
+        <td class="small">{{ report_reasons.get(report['reason'], report['reason']) }}</td>
+        <td class="small text-muted">{{ report['details'] or '—' }}</td>
+        <td><span class="badge bg-{{ 'warning text-dark' if report['status']=='pending' else ('success' if report['status']=='denied' else 'danger') }}">{{ report['status'].title() }}</span></td>
+        <td><small class="text-muted">{{ report['created_at'][:16].replace('T',' ') }}</small></td>
+        <td>
+          {% if report['status'] == 'pending' %}
+          <form method="POST" action="{{ url_for('docsformatter.review_report', report_id=report['id']) }}" class="d-flex gap-1">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            <button name="decision" value="approved" class="btn btn-sm btn-danger" onclick="return confirm('Approve this report and remove the generated item?')">Approve</button>
+            <button name="decision" value="denied" class="btn btn-sm btn-outline-secondary">Deny</button>
+          </form>
+          {% else %}<small class="text-muted">Reviewed</small>{% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+      {% if not reports %}<tr><td colspan="5" class="text-center text-muted py-3">No reports yet.</td></tr>{% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
 <div class="d-flex justify-content-between align-items-center mb-2">
   <h5 class="fw-semibold mb-0">Recent Uploads</h5>
   <a href="{{ url_for('docsformatter.admin_settings') }}" class="btn btn-brand btn-sm"><i class="bi bi-gear me-1"></i>Settings</a>

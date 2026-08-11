@@ -1,0 +1,106 @@
+{% extends "blog/base.html" %}
+
+{% block title %}Edit Post — {{ site_settings.blog_title }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card blog-card animate__animated animate__fadeIn">
+            <div class="card-body">
+                <h2 class="card-title mb-4">
+                    <i class="fas fa-pen me-2"></i>Edit Post
+                </h2>
+                <form method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                    <div class="mb-3">
+                        <label for="title" class="form-label fw-semibold">Title</label>
+                        <input type="text" class="form-control" id="title" name="title"
+                               value="{{ post.title }}" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="featured_image" class="form-label fw-semibold">
+                            Featured Image URL <span class="text-muted fw-normal">(optional)</span>
+                        </label>
+                        <input type="url" class="form-control" id="featured_image" name="featured_image"
+                               value="{{ post.featured_image or '' }}"
+                               placeholder="https://example.com/image.jpg">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">
+                            Categories / Tags <span class="text-muted fw-normal">(comma-separated)</span>
+                        </label>
+                        <div class="tags-input-wrap" id="tagsInputWrap">
+                            <div id="tagChips"></div>
+                            <input type="text" id="tagTyping" placeholder="Add a tag and press Enter or comma…"
+                                   autocomplete="off">
+                        </div>
+                        <input type="hidden" name="tags" id="tagsHidden">
+
+                        {% if all_tags %}
+                        <div class="mt-2">
+                            <small class="text-muted">Existing tags — click to add:</small><br>
+                            <div class="mt-1">
+                                {% for t in all_tags %}
+                                <button type="button" class="tag-chip tag-chip-suggest me-1 mb-1"
+                                        onclick="addTag('{{ t }}')">{{ t }}</button>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="content" class="form-label fw-semibold">Content</label>
+                        <textarea class="form-control" id="content" name="content"
+                                  rows="12" required>{{ post.content }}</textarea>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary btn-gradient">
+                            <i class="fas fa-save me-2"></i>Update Post
+                        </button>
+                        <a href="{{ url_for('blog_admin_dashboard', blog_id=blog_id) }}" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const initialTags = {{ post.tags | tojson }};
+const tagSet = new Set(initialTags);
+
+function renderChips() {
+    const wrap = document.getElementById('tagChips');
+    wrap.innerHTML = '';
+    tagSet.forEach(tag => {
+        const chip = document.createElement('span');
+        chip.className = 'tag-chip tag-chip-input me-1 mb-1';
+        chip.innerHTML = `${tag} <button type="button" onclick="removeTag('${tag.replace(/'/g,"\\'")}')">×</button>`;
+        wrap.appendChild(chip);
+    });
+    document.getElementById('tagsHidden').value = [...tagSet].join(',');
+}
+
+function addTag(raw) {
+    const tag = raw.trim();
+    if (tag && !tagSet.has(tag)) { tagSet.add(tag); renderChips(); }
+    document.getElementById('tagTyping').value = '';
+    document.getElementById('tagTyping').focus();
+}
+
+function removeTag(tag) { tagSet.delete(tag); renderChips(); }
+
+const inp = document.getElementById('tagTyping');
+inp.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); addTag(inp.value); }
+    if (e.key === 'Backspace' && !inp.value && tagSet.size) { removeTag([...tagSet].pop()); }
+});
+inp.addEventListener('blur', () => { if (inp.value.trim()) addTag(inp.value); });
+renderChips();
+</script>
+{% endblock %}

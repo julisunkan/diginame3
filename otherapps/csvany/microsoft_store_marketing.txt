@@ -1,0 +1,34 @@
+MICROSOFT STORE MARKETING COPY
+CSV-to-Anything Converter
+
+SHORT DESCRIPTION
+Convert CSV files into JSON, SQL, Excel, XML, YAML, Markdown, or TSV with a simple upload-and-download workflow.
+
+FULL DESCRIPTION
+CSV-to-Anything Converter makes it easy to move tabular data between common formats. Upload a CSV file, choose the format you need, and download a clean converted file without manually rewriting columns or records.
+
+Use the app when you need to prepare data for a database, spreadsheet, website, API, documentation, configuration file, or another data workflow. Convert CSV files to structured JSON arrays, SQL INSERT statements, Excel spreadsheets, XML documents, YAML files, Markdown tables, or tab-separated values.
+
+The straightforward interface is designed for quick one-off conversions as well as repeat data-preparation tasks. After conversion, review a preview of supported text-based outputs, download the result, and find previous conversions in the history area.
+
+CSV-to-Anything Converter is useful for developers, analysts, students, operations teams, researchers, and anyone who needs to exchange spreadsheet-style data between tools.
+
+FEATURES
+- Upload CSV files through a simple web interface.
+- Convert CSV data to JSON.
+- Generate SQL INSERT statements.
+- Export to Excel XLSX format.
+- Convert to XML.
+- Convert to YAML.
+- Create Markdown tables.
+- Convert to TSV.
+- Preview supported text-based output formats.
+- Download converted files with the appropriate file extension.
+- Review recent conversion history.
+- Supports configurable row limits for practical data processing.
+
+KEYWORDS
+CSV converter, CSV to JSON, CSV to Excel, CSV to SQL, CSV to XML, CSV to YAML, CSV to Markdown, CSV to TSV, data conversion, file converter, spreadsheet converter, table converter, data transformation, developer tools, export CSV, import CSV, convert spreadsheet
+
+MARKETING NOTES
+Output quality depends on the structure and headers of the source CSV. Review generated SQL and other converted data before using it in production systems.

@@ -1,0 +1,224 @@
+{% extends "blog/base.html" %}
+
+{% block title %}Activity Log — {{ site_settings.blog_title }}{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4 animate__animated animate__fadeInDown">
+    <div>
+        <h1 class="text-white mb-1" style="font-size:1.8rem;font-weight:900;">
+            <i class="fas fa-history me-2"></i>Activity Log
+        </h1>
+        <p class="text-white-50 mb-0 small">
+            Complete record of admin actions for <strong>{{ site_settings.blog_title }}</strong>
+        </p>
+    </div>
+    <a href="{{ url_for('blog_admin_dashboard', blog_id=blog_id) }}" class="btn btn-outline-light btn-sm">
+        <i class="fas fa-arrow-left me-2"></i>Dashboard
+    </a>
+</div>
+
+<!-- Summary stats -->
+{% if activity %}
+<div class="row g-3 mb-4 animate__animated animate__fadeIn">
+    {% set created_count  = activity | selectattr('action', 'equalto', 'created')  | list | length %}
+    {% set edited_count   = activity | selectattr('action', 'equalto', 'edited')   | list | length %}
+    {% set deleted_count  = activity | selectattr('action', 'equalto', 'deleted')  | list | length %}
+    {% set settings_count = activity | selectattr('action', 'equalto', 'settings') | list | length %}
+    {% set imported_count = activity | selectattr('action', 'equalto', 'imported') | list | length %}
+    {% set exported_count = activity | selectattr('action', 'equalto', 'exported') | list | length %}
+    <div class="col-6 col-md-2">
+        <div class="stat-card text-center">
+            <div class="stat-value" style="color:#34d399;font-size:1.6rem;">{{ created_count }}</div>
+            <div class="stat-label">Created</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-2">
+        <div class="stat-card text-center">
+            <div class="stat-value" style="color:#60a5fa;font-size:1.6rem;">{{ edited_count }}</div>
+            <div class="stat-label">Edited</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-2">
+        <div class="stat-card text-center">
+            <div class="stat-value" style="color:#f87171;font-size:1.6rem;">{{ deleted_count }}</div>
+            <div class="stat-label">Deleted</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-2">
+        <div class="stat-card text-center">
+            <div class="stat-value" style="color:#fbbf24;font-size:1.6rem;">{{ settings_count }}</div>
+            <div class="stat-label">Settings</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-2">
+        <div class="stat-card text-center">
+            <div class="stat-value" style="color:#a78bfa;font-size:1.6rem;">{{ imported_count }}</div>
+            <div class="stat-label">Imported</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-2">
+        <div class="stat-card text-center">
+            <div class="stat-value" style="color:#818cf8;font-size:1.6rem;">{{ exported_count }}</div>
+            <div class="stat-label">Exported</div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Filter bar -->
+<div class="d-flex flex-wrap gap-2 mb-4 animate__animated animate__fadeIn" id="filterBar">
+    <button class="category-pill active" onclick="filterLog('all', this)" data-filter="all">
+        <i class="fas fa-layer-group me-1"></i>All
+        <span class="ms-1 opacity-75" style="font-size:.75rem;">({{ activity | length }})</span>
+    </button>
+    {% for action in ['created','edited','deleted','settings','imported','exported'] %}
+    {% set count = activity | selectattr('action', 'equalto', action) | list | length %}
+    {% if count %}
+    <button class="category-pill" onclick="filterLog('{{ action }}', this)" data-filter="{{ action }}">
+        {% if action == 'created'  %}<i class="fas fa-plus-circle me-1"></i>{% endif %}
+        {% if action == 'edited'   %}<i class="fas fa-pen me-1"></i>{% endif %}
+        {% if action == 'deleted'  %}<i class="fas fa-trash-alt me-1"></i>{% endif %}
+        {% if action == 'settings' %}<i class="fas fa-sliders-h me-1"></i>{% endif %}
+        {% if action == 'imported' %}<i class="fas fa-file-import me-1"></i>{% endif %}
+        {% if action == 'exported' %}<i class="fas fa-file-export me-1"></i>{% endif %}
+        {{ action | title }}
+        <span class="ms-1 opacity-75" style="font-size:.75rem;">({{ count }})</span>
+    </button>
+    {% endif %}
+    {% endfor %}
+</div>
+
+<!-- Timeline -->
+<div class="card blog-card animate__animated animate__fadeIn">
+    <div class="card-body p-0">
+        {% if activity %}
+        <div class="activity-timeline" id="activityTimeline">
+            {% for entry in activity %}
+            <div class="activity-entry" data-action="{{ entry.action }}">
+                <div class="activity-icon-col">
+                    <div class="activity-dot" style="background:{{ entry.meta.color }}; box-shadow: 0 0 0 3px {{ entry.meta.color }}33;">
+                        <i class="fas {{ entry.meta.icon }}" style="font-size:.65rem;"></i>
+                    </div>
+                    {% if not loop.last %}
+                    <div class="activity-line"></div>
+                    {% endif %}
+                </div>
+                <div class="activity-body">
+                    <div class="activity-header">
+                        <span class="activity-badge" style="background:{{ entry.meta.color }}22; color:{{ entry.meta.color }}; border-color:{{ entry.meta.color }}44;">
+                            <i class="fas {{ entry.meta.icon }} me-1"></i>{{ entry.meta.label }}
+                        </span>
+                        {% if entry.timestamp %}
+                        <span class="activity-time">
+                            <i class="fas fa-clock me-1" style="opacity:.5;"></i>
+                            {{ entry.timestamp.strftime('%b %d, %Y — %H:%M') if entry.timestamp else '—' }}
+                        </span>
+                        {% endif %}
+                    </div>
+
+                    {% if entry.post_title %}
+                    <div class="activity-post-title">
+                        {% if entry.post_id and entry.action != 'deleted' %}
+                        <a href="{{ url_for('blog_post_detail', blog_id=blog_id, post_id=entry.post_id) }}"
+                           class="text-decoration-none" style="color:inherit;" target="_blank">
+                            <i class="fas fa-file-alt me-1" style="opacity:.5;font-size:.8rem;"></i>{{ entry.post_title }}
+                            <i class="fas fa-external-link-alt ms-1" style="opacity:.4;font-size:.65rem;"></i>
+                        </a>
+                        {% else %}
+                        <i class="fas fa-file-alt me-1" style="opacity:.5;font-size:.8rem;"></i>{{ entry.post_title }}
+                        {% endif %}
+                    </div>
+                    {% elif entry.action in ('settings', 'exported', 'imported') %}
+                    <div class="activity-post-title" style="font-style:italic;opacity:.7;">
+                        {% if entry.action == 'settings'  %}<i class="fas fa-palette me-1"></i>Theme & site settings{% endif %}
+                        {% if entry.action == 'exported'  %}<i class="fas fa-download me-1"></i>Blog content export{% endif %}
+                        {% if entry.action == 'imported'  %}<i class="fas fa-upload me-1"></i>Blog content import{% endif %}
+                    </div>
+                    {% endif %}
+
+                    {% if entry.details %}
+                    <div class="activity-details">{{ entry.details }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <div class="empty-state-icon mb-3" style="font-size:2.5rem;opacity:.3;"><i class="fas fa-history"></i></div>
+            <h5 class="text-white-50">No activity recorded yet</h5>
+            <p class="text-white-50 small mt-1">Actions like creating, editing, or deleting posts will appear here.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.activity-timeline { padding: 8px 0; }
+.activity-entry {
+    display: flex;
+    gap: 0;
+    padding: 0;
+    transition: background .15s;
+}
+.activity-entry:hover { background: rgba(255,255,255,.03); }
+.activity-icon-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 56px;
+    flex-shrink: 0;
+    padding-top: 18px;
+}
+.activity-dot {
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; flex-shrink: 0; z-index: 1;
+}
+.activity-line {
+    width: 2px; flex: 1; min-height: 16px;
+    background: rgba(255,255,255,.08);
+    margin: 4px 0;
+}
+.activity-body {
+    flex: 1; padding: 16px 20px 16px 0;
+    border-bottom: 1px solid rgba(255,255,255,.05);
+    min-width: 0;
+}
+.activity-entry:last-child .activity-body { border-bottom: none; }
+.activity-header {
+    display: flex; align-items: center;
+    gap: 10px; flex-wrap: wrap; margin-bottom: 6px;
+}
+.activity-badge {
+    display: inline-flex; align-items: center;
+    border: 1px solid; border-radius: 6px;
+    padding: 2px 9px; font-size: .75rem; font-weight: 700;
+}
+.activity-time {
+    font-size: .75rem; color: rgba(255,255,255,.4);
+}
+.activity-post-title {
+    font-size: .9rem; font-weight: 600;
+    color: rgba(255,255,255,.85); margin-bottom: 4px;
+}
+.activity-details {
+    font-size: .78rem; color: rgba(255,255,255,.4);
+    font-style: italic;
+}
+.activity-entry.hidden { display: none !important; }
+</style>
+
+<script>
+function filterLog(filter, btn) {
+    document.querySelectorAll('#filterBar .category-pill').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.activity-entry').forEach(entry => {
+        entry.classList.toggle('hidden',
+            filter !== 'all' && entry.dataset.action !== filter);
+    });
+}
+</script>
+
+{% endblock %}

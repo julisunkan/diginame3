@@ -1,0 +1,74 @@
+{% extends "blog/base.html" %}
+
+{% block title %}Admin Login — {{ site_settings.blog_title }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center" style="min-height: 70vh; align-items: center; display: flex;">
+    <div class="col-md-5 col-lg-4 animate__animated animate__fadeInUp">
+
+        <div class="text-center mb-4">
+            <div class="login-avatar">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <h2 class="text-white fw-bold mt-3 mb-1">Admin Login</h2>
+            <p class="text-white-50 small">Sign in to manage <strong>{{ site_settings.blog_title }}</strong></p>
+        </div>
+
+        <div class="card blog-card">
+            <div class="card-body p-4">
+                <form method="POST" autocomplete="on">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                    <div class="mb-3">
+                        <label for="username" class="form-label fw-semibold">
+                            <i class="fas fa-user me-2 text-muted"></i>Username
+                        </label>
+                        <input type="text" class="form-control" id="username" name="username"
+                               required autocomplete="username" placeholder="Enter username">
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="password" class="form-label fw-semibold">
+                            <i class="fas fa-lock me-2 text-muted"></i>Password
+                        </label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="password" name="password"
+                                   required autocomplete="current-password" placeholder="Enter password">
+                            <button type="button" class="input-group-text show-pass-btn"
+                                    onclick="togglePassword()" title="Show/hide password">
+                                <i class="fas fa-eye" id="passToggleIcon"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-gradient py-2 fw-semibold">
+                            <i class="fas fa-sign-in-alt me-2"></i>Sign In
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="text-center mt-3">
+            <a href="{{ url_for('blog_index', blog_id=blog_id) }}" class="text-white-50 small text-decoration-none">
+                <i class="fas fa-arrow-left me-1"></i>Back to {{ site_settings.blog_title }}
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+function togglePassword() {
+    const inp  = document.getElementById('password');
+    const icon = document.getElementById('passToggleIcon');
+    if (inp.type === 'password') {
+        inp.type = 'text';
+        icon.classList.replace('fa-eye', 'fa-eye-slash');
+    } else {
+        inp.type = 'password';
+        icon.classList.replace('fa-eye-slash', 'fa-eye');
+    }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,754 @@
+{% extends "blog/base.html" %}
+
+{% block title %}Site Settings — {{ site_settings.blog_title }}{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Montserrat:wght@400;600;700&family=Raleway:wght@400;600;700&family=Space+Grotesk:wght@400;600;700&family=DM+Sans:wght@400;600;700&family=Nunito:wght@400;600;700&family=Playfair+Display:wght@400;600;700&family=Merriweather:wght@400;600;700&family=Lora:wght@400;600;700&family=Source+Serif+4:wght@400;600;700&family=Roboto+Mono:wght@400;600;700&display=swap">
+<style>
+/* ── Layout ─────────────────────────────────────────────── */
+.settings-layout {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+}
+.settings-form-col { flex: 1; min-width: 0; }
+.settings-preview-col {
+    width: 320px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 80px;
+}
+@media (max-width: 991px) {
+    .settings-layout { flex-direction: column; }
+    .settings-preview-col { width: 100%; position: static; }
+}
+
+/* ── Font picker ─────────────────────────────────────────── */
+.font-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(110px,1fr)); gap:8px; max-height:300px; overflow-y:auto; padding-right:4px; }
+.font-card { display:flex; flex-direction:column; align-items:center; padding:10px 6px 8px; border-radius:10px; border:2px solid rgba(255,255,255,.1); background:rgba(255,255,255,.04); cursor:pointer; transition:all .2s; text-align:center; color:#fff; }
+.font-card:hover { background:rgba(255,255,255,.1); border-color:rgba(255,255,255,.25); transform:translateY(-2px); }
+.font-card-active { background:rgba(var(--clr-primary-rgb,102,126,234),.25) !important; border-color:var(--clr-primary,#667eea) !important; box-shadow:0 0 0 2px rgba(var(--clr-primary-rgb,102,126,234),.3); }
+.font-card-preview { font-size:1.5rem; font-weight:700; line-height:1; margin-bottom:5px; display:block; }
+.font-card-name { font-size:.65rem; font-weight:600; line-height:1.2; display:block; font-family:Inter,sans-serif; color:rgba(255,255,255,.9); }
+.font-card-cat { font-size:.58rem; display:block; font-family:Inter,sans-serif; color:rgba(255,255,255,.4); margin-top:2px; }
+
+/* ── Theme picker ────────────────────────────────────────── */
+.theme-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:14px; }
+.theme-card {
+    background:rgba(255,255,255,.05); border:2px solid rgba(255,255,255,.1);
+    border-radius:14px; padding:0; cursor:pointer; transition:all .2s;
+    text-align:center; color:#fff; overflow:hidden; display:flex; flex-direction:column;
+}
+.theme-card:hover { border-color:rgba(255,255,255,.35); transform:translateY(-3px); box-shadow:0 10px 28px rgba(0,0,0,.4); }
+.theme-card.theme-active { border-color:#a78bfa; box-shadow:0 0 0 3px rgba(167,139,250,.35); }
+.theme-preview { position:relative; height:70px; overflow:hidden; }
+.theme-preview-bg { position:absolute; inset:0; }
+.theme-preview-navbar { position:absolute; top:0; left:0; right:0; height:14px; }
+.theme-preview-card {
+    position:absolute; bottom:8px; left:50%; transform:translateX(-50%);
+    width:70%; height:28px; border-radius:6px; opacity:.9;
+}
+.theme-preview-dot { position:absolute; bottom:18px; left:26%; width:10px; height:10px; border-radius:50%; border:2px solid rgba(255,255,255,.6); }
+.theme-preview-dot2 { left:auto; right:26%; }
+.theme-swatches { display:flex; justify-content:center; gap:5px; padding:8px 10px 4px; }
+.theme-swatch { width:16px; height:16px; border-radius:50%; display:inline-block; flex-shrink:0; }
+.theme-name { font-size:.8rem; font-weight:700; padding:2px 8px 2px; color:rgba(255,255,255,.9); }
+.theme-fonts { font-size:.65rem; color:rgba(255,255,255,.4); padding:0 8px 10px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+/* ── Live Preview panel ──────────────────────────────────── */
+#live-preview {
+    --pv-primary:    {{ settings.primary_color }};
+    --pv-secondary:  {{ settings.secondary_color }};
+    --pv-bg-start:   {{ settings.background_color }};
+    --pv-overall:    {{ settings.overall_background }};
+    --pv-card:       {{ settings.card_background }};
+    --pv-text:       {{ settings.text_color }};
+    --pv-navbar:     {{ settings.navbar_color }};
+    --pv-nav-text:   {{ settings.navbar_text_color }};
+    --pv-head-font:  '{{ settings.heading_font }}', sans-serif;
+    --pv-body-font:  '{{ settings.body_font }}', sans-serif;
+}
+.pv-wrap {
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 16px;
+    overflow: hidden;
+}
+.pv-header-bar {
+    background: rgba(255,255,255,.08);
+    border-bottom: 1px solid rgba(255,255,255,.1);
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.pv-dot { width:10px; height:10px; border-radius:50%; }
+.pv-url {
+    flex: 1;
+    background: rgba(0,0,0,.3);
+    border-radius: 6px;
+    padding: 3px 10px;
+    font-size: .65rem;
+    color: rgba(255,255,255,.4);
+    font-family: monospace;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.pv-label {
+    font-size: .7rem;
+    font-weight: 700;
+    color: rgba(255,255,255,.5);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    padding: 10px 14px 6px;
+}
+.pv-browser {
+    background: var(--pv-overall);
+    min-height: 420px;
+    overflow: hidden;
+}
+.pv-navbar {
+    background: var(--pv-navbar);
+    padding: 8px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.pv-brand {
+    font-family: var(--pv-head-font);
+    font-size: .75rem;
+    font-weight: 800;
+    color: var(--pv-nav-text, #fff);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 140px;
+}
+.pv-nav-links {
+    display: flex;
+    gap: 8px;
+}
+.pv-nav-link {
+    font-family: var(--pv-body-font);
+    font-size: .6rem;
+    color: var(--pv-nav-text, rgba(255,255,255,.7));
+    opacity: 0.8;
+}
+.pv-hero {
+    background: linear-gradient(135deg, var(--pv-bg-start) 0%, var(--pv-secondary) 100%);
+    padding: 20px 14px 22px;
+    text-align: center;
+}
+.pv-hero-title {
+    font-family: var(--pv-head-font);
+    font-size: 1rem;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 5px;
+    line-height: 1.2;
+}
+.pv-hero-sub {
+    font-family: var(--pv-body-font);
+    font-size: .62rem;
+    color: rgba(255,255,255,.75);
+    margin-bottom: 10px;
+}
+.pv-hero-btn {
+    display: inline-block;
+    background: var(--pv-primary);
+    color: #fff;
+    font-family: var(--pv-body-font);
+    font-size: .58rem;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 6px;
+}
+.pv-cards {
+    padding: 10px 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.pv-card {
+    background: var(--pv-card);
+    border-radius: 8px;
+    padding: 9px 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.15);
+}
+.pv-card-tag {
+    display: inline-block;
+    background: var(--pv-primary);
+    color: #fff;
+    font-size: .5rem;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 4px;
+    margin-bottom: 4px;
+    font-family: var(--pv-body-font);
+}
+.pv-card-title {
+    font-family: var(--pv-head-font);
+    font-size: .7rem;
+    font-weight: 700;
+    color: var(--pv-text);
+    margin-bottom: 3px;
+    line-height: 1.2;
+}
+.pv-card-body {
+    font-family: var(--pv-body-font);
+    font-size: .58rem;
+    color: var(--pv-text);
+    opacity: .7;
+    margin-bottom: 5px;
+    line-height: 1.4;
+}
+.pv-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.pv-card-meta {
+    font-family: var(--pv-body-font);
+    font-size: .52rem;
+    color: var(--pv-text);
+    opacity: .5;
+}
+.pv-read-btn {
+    font-family: var(--pv-body-font);
+    font-size: .52rem;
+    font-weight: 700;
+    color: var(--pv-primary);
+}
+.pv-toggle-btn {
+    width: 100%;
+    background: rgba(255,255,255,.07);
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 10px;
+    color: rgba(255,255,255,.7);
+    font-size: .78rem;
+    font-weight: 600;
+    padding: 8px 14px;
+    cursor: pointer;
+    transition: all .2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+.pv-toggle-btn:hover { background:rgba(255,255,255,.12); color:#fff; }
+@media (min-width: 992px) { .pv-toggle-btn { display: none; } }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 animate__animated animate__fadeInDown">
+    <div>
+        <h1 class="text-white mb-1" style="font-size:1.8rem;font-weight:800;">
+            <i class="fas fa-palette me-2"></i>Site Settings
+        </h1>
+        <p class="text-white-50 mb-0 small">Customize the appearance of <strong>{{ site_settings.blog_title }}</strong></p>
+    </div>
+    <a href="{{ url_for('blog_admin_dashboard', blog_id=blog_id) }}" class="btn btn-outline-light btn-sm">
+        <i class="fas fa-arrow-left me-2"></i>Dashboard
+    </a>
+</div>
+
+<div class="settings-layout">
+
+    <!-- ── Left: settings form ─────────────────────────── -->
+    <div class="settings-form-col">
+        <form method="POST" class="animate__animated animate__fadeIn" id="settingsForm">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <!-- Site Info -->
+            <div class="card blog-card mb-4">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-4" style="color:#a5b4fc;">
+                        <i class="fas fa-info-circle me-2"></i>Site Information
+                    </h5>
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label for="blog_title" class="form-label fw-semibold">Blog Title</label>
+                            <input type="text" class="form-control" id="blog_title" name="blog_title"
+                                   value="{{ settings.blog_title }}" required placeholder="My Awesome Blog">
+                        </div>
+                        <div class="col-12">
+                            <label for="blog_description" class="form-label fw-semibold">Blog Description</label>
+                            <textarea class="form-control" id="blog_description" name="blog_description"
+                                      rows="2" required placeholder="A short description of your blog">{{ settings.blog_description }}</textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Typography -->
+            <div class="card blog-card mb-4 animate__animated animate__fadeIn">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-1" style="color:var(--clr-primary,#a5b4fc);">
+                        <i class="fas fa-font me-2"></i>Typography
+                    </h5>
+                    <p class="text-white-50 small mb-4">Choose fonts for headings and body text.</p>
+
+                    {% set all_fonts = [
+                        {'name':'Inter','category':'Sans-serif'},
+                        {'name':'Poppins','category':'Sans-serif'},
+                        {'name':'Montserrat','category':'Sans-serif'},
+                        {'name':'Raleway','category':'Sans-serif'},
+                        {'name':'Space Grotesk','category':'Sans-serif'},
+                        {'name':'DM Sans','category':'Sans-serif'},
+                        {'name':'Nunito','category':'Sans-serif'},
+                        {'name':'Playfair Display','category':'Serif'},
+                        {'name':'Merriweather','category':'Serif'},
+                        {'name':'Lora','category':'Serif'},
+                        {'name':'Source Serif 4','category':'Serif'},
+                        {'name':'Roboto Mono','category':'Monospace'}
+                    ] %}
+
+                    <input type="hidden" name="heading_font" id="heading_font" value="{{ settings.heading_font }}">
+                    <input type="hidden" name="body_font"    id="body_font"    value="{{ settings.body_font }}">
+
+                    <div class="row g-4">
+                        <div class="col-12 col-md-6">
+                            <p class="text-white fw-semibold mb-2 small text-uppercase" style="letter-spacing:.05em;">
+                                <i class="fas fa-heading me-1"></i>Heading Font
+                            </p>
+                            <div class="font-grid" id="heading-font-grid">
+                                {% for font in all_fonts %}
+                                <button type="button"
+                                        class="font-card {% if font.name == settings.heading_font %}font-card-active{% endif %}"
+                                        data-font="{{ font.name }}" data-target="heading"
+                                        style="font-family:'{{ font.name }}',sans-serif;" title="{{ font.category }}">
+                                    <span class="font-card-preview">Aa</span>
+                                    <span class="font-card-name">{{ font.name }}</span>
+                                    <span class="font-card-cat">{{ font.category }}</span>
+                                </button>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <p class="text-white fw-semibold mb-2 small text-uppercase" style="letter-spacing:.05em;">
+                                <i class="fas fa-align-left me-1"></i>Body Font
+                            </p>
+                            <div class="font-grid" id="body-font-grid">
+                                {% for font in all_fonts %}
+                                <button type="button"
+                                        class="font-card {% if font.name == settings.body_font %}font-card-active{% endif %}"
+                                        data-font="{{ font.name }}" data-target="body"
+                                        style="font-family:'{{ font.name }}',sans-serif;">
+                                    <span class="font-card-preview">Aa</span>
+                                    <span class="font-card-name">{{ font.name }}</span>
+                                    <span class="font-card-cat">{{ font.category }}</span>
+                                </button>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preset Themes -->
+            <div class="card blog-card mb-4 animate__animated animate__fadeIn">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-1" style="color:var(--clr-primary,#a5b4fc);">
+                        <i class="fas fa-magic me-2"></i>Preset Themes
+                    </h5>
+                    <p class="text-white-50 small mb-4">Pick a theme to instantly fill all color and font fields — then save to apply it.</p>
+
+                    <div class="theme-grid">
+                        {% for theme in preset_themes %}
+                        <button type="button" class="theme-card" data-theme='{{ theme | tojson }}'
+                                title="Apply {{ theme.name }}">
+                            <div class="theme-preview">
+                                <div class="theme-preview-bg" style="background:linear-gradient(135deg,{{ theme.primary_color }},{{ theme.secondary_color }});"></div>
+                                <div class="theme-preview-navbar" style="background:{{ theme.navbar_color }};"></div>
+                                <div class="theme-preview-card" style="background:{{ theme.card_background }};"></div>
+                                <div class="theme-preview-dot" style="background:{{ theme.primary_color }};"></div>
+                                <div class="theme-preview-dot theme-preview-dot2" style="background:{{ theme.secondary_color }};"></div>
+                            </div>
+                            <div class="theme-swatches">
+                                <span class="theme-swatch" style="background:{{ theme.primary_color }};" title="Primary"></span>
+                                <span class="theme-swatch" style="background:{{ theme.secondary_color }};" title="Secondary"></span>
+                                <span class="theme-swatch" style="background:{{ theme.overall_background }};" title="Background"></span>
+                                <span class="theme-swatch" style="background:{{ theme.navbar_color }};" title="Navbar"></span>
+                                <span class="theme-swatch" style="background:{{ theme.card_background }};border:1px solid rgba(255,255,255,.2);" title="Card"></span>
+                            </div>
+                            <div class="theme-name">{{ theme.emoji }} {{ theme.name }}</div>
+                            <div class="theme-fonts">{{ theme.heading_font }} / {{ theme.body_font }}</div>
+                        </button>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Color Customization -->
+            <div class="card blog-card mb-4">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-1" style="color:var(--clr-primary,#a5b4fc);">
+                        <i class="fas fa-paint-brush me-2"></i>Color Scheme
+                    </h5>
+                    <p class="text-white-50 small mb-3">These colors control the overall look of your blog. Selecting a theme above fills these in automatically.</p>
+
+                    <div class="row g-3">
+                        <div class="col-6 col-md-4">
+                            <label for="primary_color" class="form-label fw-semibold">Primary Color</label>
+                            <div class="color-picker-wrap">
+                                <input type="color" class="form-control form-control-color" id="primary_color"
+                                       name="primary_color" value="{{ settings.primary_color }}">
+                                <span class="color-hex-label" id="primary_color_label">{{ settings.primary_color }}</span>
+                            </div>
+                            <small class="text-white-50">Buttons, links, accents</small>
+                        </div>
+                        <div class="col-6 col-md-4">
+                            <label for="secondary_color" class="form-label fw-semibold">Secondary Color</label>
+                            <div class="color-picker-wrap">
+                                <input type="color" class="form-control form-control-color" id="secondary_color"
+                                       name="secondary_color" value="{{ settings.secondary_color }}">
+                                <span class="color-hex-label" id="secondary_color_label">{{ settings.secondary_color }}</span>
+                            </div>
+                            <small class="text-white-50">Gradient end, highlights</small>
+                        </div>
+                        <div class="col-6 col-md-4">
+                            <label for="navbar_color" class="form-label fw-semibold">Navbar Background</label>
+                            <div class="color-picker-wrap">
+                                <input type="color" class="form-control form-control-color" id="navbar_color"
+                                       name="navbar_color" value="{{ settings.navbar_color }}">
+                                <span class="color-hex-label" id="navbar_color_label">{{ settings.navbar_color }}</span>
+                            </div>
+                            <small class="text-white-50">Top navigation bar background</small>
+                        </div>
+                        <div class="col-6 col-md-4">
+                            <label for="navbar_text_color" class="form-label fw-semibold">Navbar Text</label>
+                            <div class="color-picker-wrap">
+                                <input type="color" class="form-control form-control-color" id="navbar_text_color"
+                                       name="navbar_text_color" value="{{ settings.navbar_text_color }}">
+                                <span class="color-hex-label" id="navbar_text_color_label">{{ settings.navbar_text_color }}</span>
+                            </div>
+                            <small class="text-white-50">Navigation links &amp; brand text</small>
+                        </div>
+                        <div class="col-6 col-md-4">
+                            <label for="overall_background" class="form-label fw-semibold">Page Background</label>
+                            <div class="color-picker-wrap">
+                                <input type="color" class="form-control form-control-color" id="overall_background"
+                                       name="overall_background" value="{{ settings.overall_background }}">
+                                <span class="color-hex-label" id="overall_background_label">{{ settings.overall_background }}</span>
+                            </div>
+                            <small class="text-white-50">Main page background</small>
+                        </div>
+                        <div class="col-6 col-md-4">
+                            <label for="background_color" class="form-label fw-semibold">Gradient Start</label>
+                            <div class="color-picker-wrap">
+                                <input type="color" class="form-control form-control-color" id="background_color"
+                                       name="background_color" value="{{ settings.background_color }}">
+                                <span class="color-hex-label" id="background_color_label">{{ settings.background_color }}</span>
+                            </div>
+                            <small class="text-white-50">Hero gradient start</small>
+                        </div>
+                        <div class="col-6 col-md-4">
+                            <label for="card_background" class="form-label fw-semibold">Card Background</label>
+                            <div class="color-picker-wrap">
+                                <input type="color" class="form-control form-control-color" id="card_background"
+                                       name="card_background" value="{{ settings.card_background }}">
+                                <span class="color-hex-label" id="card_background_label">{{ settings.card_background }}</span>
+                            </div>
+                            <small class="text-white-50">Post cards &amp; panels</small>
+                        </div>
+                        <div class="col-6 col-md-4">
+                            <label for="text_color" class="form-label fw-semibold">Text Color</label>
+                            <div class="color-picker-wrap">
+                                <input type="color" class="form-control form-control-color" id="text_color"
+                                       name="text_color" value="{{ settings.text_color }}">
+                                <span class="color-hex-label" id="text_color_label">{{ settings.text_color }}</span>
+                            </div>
+                            <small class="text-white-50">Body text color</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="d-flex flex-wrap gap-3 align-items-center mb-5">
+                <button type="submit" class="btn btn-gradient px-4 py-2 fw-semibold">
+                    <i class="fas fa-save me-2"></i>Save Settings
+                </button>
+                <a href="{{ url_for('blog_admin_dashboard', blog_id=blog_id) }}" class="btn btn-outline-light py-2">
+                    Cancel
+                </a>
+                <button type="button" class="btn btn-outline-warning py-2 ms-auto fw-semibold"
+                        onclick="confirmReset()">
+                    <i class="fas fa-undo me-2"></i>Reset to Defaults
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- ── Right: live preview ──────────────────────────── -->
+    <div class="settings-preview-col animate__animated animate__fadeInRight">
+
+        <!-- mobile toggle -->
+        <button class="pv-toggle-btn" id="pvToggleBtn" onclick="togglePreview()">
+            <i class="fas fa-eye" id="pvToggleIcon"></i>
+            <span id="pvToggleLabel">Show Live Preview</span>
+        </button>
+
+        <div id="pvPanel" style="display:none;">
+            <div id="live-preview">
+                <div class="pv-wrap">
+                    <div class="pv-header-bar">
+                        <div class="pv-dot" style="background:#ff5f57;"></div>
+                        <div class="pv-dot" style="background:#febc2e;"></div>
+                        <div class="pv-dot" style="background:#28c840;"></div>
+                        <div class="pv-url">{{ request.host }}/your-blog/</div>
+                    </div>
+                    <div class="pv-label"><i class="fas fa-eye me-1"></i>Live Preview</div>
+                    <div class="pv-browser">
+                        <div class="pv-navbar">
+                            <div class="pv-brand" id="pv-brand">{{ settings.blog_title }}</div>
+                            <div class="pv-nav-links">
+                                <span class="pv-nav-link">Home</span>
+                                <span class="pv-nav-link">Admin</span>
+                            </div>
+                        </div>
+                        <div class="pv-hero">
+                            <div class="pv-hero-title" id="pv-hero-title">{{ settings.blog_title }}</div>
+                            <div class="pv-hero-sub" id="pv-hero-sub">{{ settings.blog_description[:60] }}{% if settings.blog_description|length > 60 %}…{% endif %}</div>
+                            <div class="pv-hero-btn">Read Latest Posts</div>
+                        </div>
+                        <div class="pv-cards">
+                            <div class="pv-card">
+                                <div class="pv-card-tag">Tutorial</div>
+                                <div class="pv-card-title">Getting Started with Your Blog</div>
+                                <div class="pv-card-body">A quick guide to writing your first post and customizing your blog to match your style.</div>
+                                <div class="pv-card-footer">
+                                    <span class="pv-card-meta">May 21, 2026</span>
+                                    <span class="pv-read-btn">Read more →</span>
+                                </div>
+                            </div>
+                            <div class="pv-card">
+                                <div class="pv-card-tag">Design</div>
+                                <div class="pv-card-title">Choosing the Perfect Color Scheme</div>
+                                <div class="pv-card-body">How colors affect your readers and tips for picking a palette that reflects your brand.</div>
+                                <div class="pv-card-footer">
+                                    <span class="pv-card-meta">May 18, 2026</span>
+                                    <span class="pv-read-btn">Read more →</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-center mt-2" style="font-size:.65rem;color:rgba(255,255,255,.3);">
+                    <i class="fas fa-info-circle me-1"></i>Preview updates as you change colors &amp; fonts
+                </p>
+            </div>
+        </div>
+
+        <!-- always visible on desktop -->
+        <div id="pvPanelDesktop" class="d-none d-lg-block">
+            <div id="live-preview-desktop">
+                <div class="pv-wrap">
+                    <div class="pv-header-bar">
+                        <div class="pv-dot" style="background:#ff5f57;"></div>
+                        <div class="pv-dot" style="background:#febc2e;"></div>
+                        <div class="pv-dot" style="background:#28c840;"></div>
+                        <div class="pv-url">{{ request.host }}/your-blog/</div>
+                    </div>
+                    <div class="pv-label"><i class="fas fa-eye me-1"></i>Live Preview</div>
+                    <div class="pv-browser">
+                        <div class="pv-navbar">
+                            <div class="pv-brand" id="pv-brand-d">{{ settings.blog_title }}</div>
+                            <div class="pv-nav-links">
+                                <span class="pv-nav-link">Home</span>
+                                <span class="pv-nav-link">Admin</span>
+                            </div>
+                        </div>
+                        <div class="pv-hero">
+                            <div class="pv-hero-title" id="pv-hero-title-d">{{ settings.blog_title }}</div>
+                            <div class="pv-hero-sub" id="pv-hero-sub-d">{{ settings.blog_description[:60] }}{% if settings.blog_description|length > 60 %}…{% endif %}</div>
+                            <div class="pv-hero-btn">Read Latest Posts</div>
+                        </div>
+                        <div class="pv-cards">
+                            <div class="pv-card">
+                                <div class="pv-card-tag">Tutorial</div>
+                                <div class="pv-card-title">Getting Started with Your Blog</div>
+                                <div class="pv-card-body">A quick guide to writing your first post and customizing your blog to match your style.</div>
+                                <div class="pv-card-footer">
+                                    <span class="pv-card-meta">May 21, 2026</span>
+                                    <span class="pv-read-btn">Read more →</span>
+                                </div>
+                            </div>
+                            <div class="pv-card">
+                                <div class="pv-card-tag">Design</div>
+                                <div class="pv-card-title">Choosing the Perfect Color Scheme</div>
+                                <div class="pv-card-body">How colors affect your readers and tips for picking a palette that reflects your brand.</div>
+                                <div class="pv-card-footer">
+                                    <span class="pv-card-meta">May 18, 2026</span>
+                                    <span class="pv-read-btn">Read more →</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-center mt-2" style="font-size:.65rem;color:rgba(255,255,255,.3);">
+                    <i class="fas fa-info-circle me-1"></i>Preview updates as you change colors &amp; fonts
+                </p>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Reset form & modal -->
+<form id="resetForm" method="POST" action="{{ url_for('blog_reset_settings', blog_id=blog_id) }}" style="display:none;">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+</form>
+
+<div class="modal fade" id="resetModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content blog-card border-0" style="background:rgba(30,30,50,.97);">
+            <div class="modal-body text-center p-4">
+                <div style="width:56px;height:56px;border-radius:50%;background:rgba(234,179,8,.15);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.4rem;color:#facc15;">
+                    <i class="fas fa-rotate-left"></i>
+                </div>
+                <h5 class="text-white fw-bold mb-2">Reset to Default Theme?</h5>
+                <p class="text-white-50 small mb-4">
+                    This will replace all your current color settings with the original defaults.<br>
+                    Your posts and other content won't be affected.
+                </p>
+                <div class="d-flex gap-3 justify-content-center">
+                    <button type="button" class="btn btn-outline-light px-4" data-bs-dismiss="modal">Keep Current</button>
+                    <button type="button" class="btn btn-warning px-4 fw-semibold" onclick="doReset()">
+                        <i class="fas fa-undo me-2"></i>Yes, Reset
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function confirmReset() { new bootstrap.Modal(document.getElementById('resetModal')).show(); }
+function doReset() { document.getElementById('resetForm').submit(); }
+
+/* ── Live preview helpers ─────────────────────────────── */
+const PREVIEW_IDS = ['live-preview', 'live-preview-desktop'];
+
+function pvSetVar(name, value) {
+    PREVIEW_IDS.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.setProperty(name, value);
+    });
+}
+
+function pvSetFont(target, fontName) {
+    pvSetVar(target === 'heading' ? '--pv-head-font' : '--pv-body-font',
+             `'${fontName}', sans-serif`);
+}
+
+function syncPreview() {
+    pvSetVar('--pv-primary',    document.getElementById('primary_color')?.value    || '');
+    pvSetVar('--pv-secondary',  document.getElementById('secondary_color')?.value  || '');
+    pvSetVar('--pv-bg-start',   document.getElementById('background_color')?.value || '');
+    pvSetVar('--pv-overall',    document.getElementById('overall_background')?.value|| '');
+    pvSetVar('--pv-card',       document.getElementById('card_background')?.value  || '');
+    pvSetVar('--pv-text',       document.getElementById('text_color')?.value       || '');
+    pvSetVar('--pv-navbar',     document.getElementById('navbar_color')?.value     || '');
+    pvSetVar('--pv-nav-text',   document.getElementById('navbar_text_color')?.value || '');
+}
+
+function syncPreviewText() {
+    const title = document.getElementById('blog_title')?.value || '';
+    const desc  = document.getElementById('blog_description')?.value || '';
+    const shortDesc = desc.length > 60 ? desc.slice(0, 60) + '…' : desc;
+    ['pv-brand','pv-brand-d'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = title;
+    });
+    ['pv-hero-title','pv-hero-title-d'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = title;
+    });
+    ['pv-hero-sub','pv-hero-sub-d'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = shortDesc;
+    });
+}
+
+/* ── Color label sync + preview ──────────────────────── */
+['primary_color','secondary_color','navbar_color','navbar_text_color','overall_background',
+ 'background_color','card_background','text_color'].forEach(id => {
+    const el  = document.getElementById(id);
+    const lbl = document.getElementById(id + '_label');
+    if (el) {
+        if (lbl) el.addEventListener('input', () => { lbl.textContent = el.value; });
+        el.addEventListener('input', syncPreview);
+    }
+});
+
+/* ── Blog title/desc → preview text ──────────────────── */
+['blog_title','blog_description'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', syncPreviewText);
+});
+
+/* ── Font card selection ──────────────────────────────── */
+document.querySelectorAll('.font-card').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const target   = btn.dataset.target;
+        const fontName = btn.dataset.font;
+        document.querySelectorAll(`[data-target="${target}"]`).forEach(b => b.classList.remove('font-card-active'));
+        btn.classList.add('font-card-active');
+        document.getElementById(target + '_font').value = fontName;
+        pvSetFont(target, fontName);
+    });
+});
+
+/* ── Theme picker ────────────────────────────────────── */
+function setColorField(id, value) {
+    const el  = document.getElementById(id);
+    const lbl = document.getElementById(id + '_label');
+    if (el)  el.value = value;
+    if (lbl) lbl.textContent = value;
+}
+
+function activateFontCard(target, fontName) {
+    document.querySelectorAll(`[data-target="${target}"]`).forEach(b => b.classList.remove('font-card-active'));
+    const match = document.querySelector(`[data-target="${target}"][data-font="${fontName}"]`);
+    if (match) match.classList.add('font-card-active');
+    const hidden = document.getElementById(target + '_font');
+    if (hidden) hidden.value = fontName;
+    pvSetFont(target, fontName);
+}
+
+document.querySelectorAll('.theme-card').forEach(card => {
+    card.addEventListener('click', () => {
+        const theme = JSON.parse(card.dataset.theme);
+        setColorField('primary_color',      theme.primary_color);
+        setColorField('secondary_color',    theme.secondary_color);
+        setColorField('background_color',   theme.background_color);
+        setColorField('overall_background', theme.overall_background);
+        setColorField('card_background',    theme.card_background);
+        setColorField('text_color',         theme.text_color);
+        setColorField('navbar_color',       theme.navbar_color);
+        setColorField('navbar_text_color',  theme.navbar_text_color || '#ffffff');
+        activateFontCard('heading', theme.heading_font);
+        activateFontCard('body',    theme.body_font);
+        syncPreview();
+        document.querySelectorAll('.theme-card').forEach(c => c.classList.remove('theme-active'));
+        card.classList.add('theme-active');
+    });
+});
+
+/* ── Mobile preview toggle ───────────────────────────── */
+let pvOpen = false;
+function togglePreview() {
+    pvOpen = !pvOpen;
+    const panel = document.getElementById('pvPanel');
+    const icon  = document.getElementById('pvToggleIcon');
+    const label = document.getElementById('pvToggleLabel');
+    if (panel) panel.style.display = pvOpen ? 'block' : 'none';
+    if (icon)  { icon.className = pvOpen ? 'fas fa-eye-slash' : 'fas fa-eye'; }
+    if (label) label.textContent = pvOpen ? 'Hide Preview' : 'Show Live Preview';
+}
+</script>
+{% endblock %}

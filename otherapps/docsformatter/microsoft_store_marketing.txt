@@ -1,0 +1,33 @@
+MICROSOFT STORE MARKETING COPY
+Auto-Formatter for Docs
+
+SHORT DESCRIPTION
+Turn PDF, Word, and text files into clean, professionally formatted documents with a fast AI-assisted workflow.
+
+FULL DESCRIPTION
+Auto-Formatter for Docs helps transform unstructured or inconsistent documents into cleaner, easier-to-read text. Upload a PDF, Word document, or plain-text file and receive a professionally formatted version ready to review, copy, or download.
+
+The app extracts text from PDF, DOCX, DOC, and TXT files, then applies a consistent formatting style. It is useful for cleaning notes, organizing imported content, preparing drafts, standardizing documents, and making long text easier to read.
+
+Choose a file, submit it, and review the formatted result in the browser. Finished output can be downloaded as a text file, while recent processing history makes it easy to revisit previous work.
+
+Auto-Formatter for Docs is designed for students, writers, researchers, office teams, administrators, and anyone who regularly receives documents that need structure and presentation improvements.
+
+FEATURES
+- Process PDF files.
+- Process Microsoft Word DOCX files.
+- Process DOC files.
+- Process plain-text TXT files.
+- Extract text from uploaded documents.
+- Apply a professional formatting style.
+- Use AI-assisted formatting when configured by the app administrator.
+- Preview formatted output in the browser.
+- Download formatted results as text files.
+- Review recent document-processing history.
+- Handle document cleanup without manually reformatting every paragraph.
+
+KEYWORDS
+document formatter, document formatting, PDF formatter, Word formatter, DOCX formatter, text formatter, AI document formatting, document cleanup, format documents, professional formatting, document converter, text extraction, organize documents, writing tools, productivity tools, document editor
+
+MARKETING NOTES
+The app formats extracted text and is not intended to preserve every original document layout, image, chart, font, or page design. Review the output before publishing or sharing.

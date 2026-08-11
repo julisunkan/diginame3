@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}Activity Book Generator{% endblock %}</title>
+  <meta name="description" content="Generate custom activity books with word searches, Sudoku, crosswords and trivia."/>
+  <meta name="theme-color" content="#DC2626"/>
+  <link rel="manifest" href="{{ url_for('actibook.static', filename='manifest.json') }}"/>
+  <link rel="apple-touch-icon" href="{{ url_for('actibook.static', filename='icons/icon-192.png') }}"/>
+  <link rel="icon" href="{{ url_for('actibook.static', filename='icons/icon-192.png') }}" type="image/png"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+  <style>
+    :root { --brand: #DC2626; --brand-dark: #b91c1c; --brand-light: #fee2e2; }
+    body { background: #fff8f8; min-height: 100vh; font-family: 'Segoe UI', system-ui, sans-serif; }
+    .navbar { background: var(--brand) !important; }
+    .navbar-brand, .nav-link { color: #fff !important; }
+    .nav-link:hover { opacity: .85; }
+    .btn-brand { background: var(--brand); border-color: var(--brand); color: #fff; }
+    .btn-brand:hover { background: var(--brand-dark); border-color: var(--brand-dark); color: #fff; }
+    .hero-card { background: linear-gradient(135deg, var(--brand) 0%, #b91c1c 100%); color: #fff; border-radius: 16px; }
+    .card { border: none; border-radius: 12px; box-shadow: 0 1px 8px rgba(0,0,0,.08); }
+    .alert { border-radius: 10px; border: none; }
+    .activity-check:checked + label { background: var(--brand-light); border-color: var(--brand); }
+    footer { background: #1e293b; color: #94a3b8; }
+  </style>
+  {% block head %}{% endblock %}
+</head>
+<body>
+<nav class="navbar navbar-expand-lg">
+  <div class="container">
+    <a class="navbar-brand fw-bold" href="{{ url_for('actibook.index') }}">
+      <i class="bi bi-book me-2"></i>ActiBook
+    </a>
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="nav">
+      <ul class="navbar-nav ms-auto gap-1">
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('actibook.index') }}"><i class="bi bi-plus-circle me-1"></i>Generate</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('actibook.history') }}"><i class="bi bi-clock-history me-1"></i>History</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('actibook.groq_settings') }}"><i class="bi bi-gear me-1"></i>Settings</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container py-4">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ 'danger' if category=='error' else ('warning' if category=='warning' else 'success') }} alert-dismissible fade show" role="alert">
+          <i class="bi bi-{{ 'exclamation-triangle' if category=='error' else ('exclamation-circle' if category=='warning' else 'check-circle') }} me-2"></i>{{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+  {% block content %}{% endblock %}
+</div>
+
+<footer class="mt-auto py-3 text-center">
+  <div class="container"><small>ActiBook &mdash; Activity Book Generator</small></div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('{{ url_for("actibook.static", filename="sw.js") }}', {scope: '/otherapps/actibook/'})
+    .catch(e => console.warn('SW:', e));
+}
+</script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,77 @@
+{% extends 'actibook/base.html' %}
+{% block title %}Activity Book Generator{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="hero-card p-4 mb-4 text-center">
+      <i class="bi bi-book-fill display-4 mb-2"></i>
+      <h1 class="h2 fw-bold mb-1">Activity Book Generator</h1>
+      <p class="mb-0 opacity-75">Create custom activity books with word searches, Sudoku, crosswords &amp; trivia. Download as PDF.</p>
+    </div>
+
+    <div class="card p-4">
+      <h5 class="fw-semibold mb-3"><i class="bi bi-plus-circle me-2 text-danger"></i>Create Activity Book</h5>
+      <form method="POST" action="{{ url_for('actibook.generate') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
+        <div class="mb-3">
+          <label class="form-label fw-medium">Theme <span class="text-danger">*</span></label>
+          <input type="text" class="form-control form-control-lg" name="theme"
+                 placeholder="e.g. Space, Ocean, History, Animals, Sports…" required maxlength="100"/>
+          <div class="form-text">The theme guides word selection and trivia questions.</div>
+        </div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label class="form-label fw-medium">Difficulty</label>
+            <select class="form-select form-select-lg" name="difficulty">
+              {% for d in difficulties %}
+              <option value="{{ d }}">{{ d.title() }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-medium">Number of pages <small class="text-muted">(max {{ max_pages }})</small></label>
+            <input type="number" class="form-control form-control-lg" name="pages"
+                   min="1" max="{{ max_pages }}" value="4"/>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label fw-medium">Activities to include <span class="text-danger">*</span></label>
+          <div class="row g-2">
+            {% set act_icons = {'word_search':'search','sudoku':'grid-3x3-gap','trivia':'question-circle','crossword':'puzzle'} %}
+            {% set act_labels = {'word_search':'Word Search','sudoku':'Sudoku','trivia':'Trivia Quiz','crossword':'Crossword'} %}
+            {% set act_notes = {'word_search':'Grid & word list (no API needed)','sudoku':'Logic puzzles (no API needed)','trivia':'Multiple choice (needs API)','crossword':'Clues & answers (needs API)'} %}
+            {% for at in activity_types %}
+            <div class="col-6 col-md-3">
+              <input type="checkbox" class="btn-check activity-check" name="activities" id="act_{{ at }}" value="{{ at }}" checked autocomplete="off"/>
+              <label class="btn btn-outline-danger w-100 h-100 d-flex flex-column align-items-center py-3" for="act_{{ at }}">
+                <i class="bi bi-{{ act_icons[at] }} fs-3 mb-1"></i>
+                <span class="fw-semibold">{{ act_labels[at] }}</span>
+                <small class="text-muted mt-1" style="font-size:.7rem">{{ act_notes[at] }}</small>
+              </label>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="d-grid">
+          <button type="submit" class="btn btn-brand btn-lg" id="genBtn">
+            <i class="bi bi-book me-2"></i>Generate Activity Book
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+document.querySelector('form').addEventListener('submit', function() {
+  const btn = document.getElementById('genBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Generating… this may take a minute';
+});
+</script>
+{% endblock %}

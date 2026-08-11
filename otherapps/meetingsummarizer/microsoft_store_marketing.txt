@@ -1,0 +1,32 @@
+MICROSOFT STORE MARKETING COPY
+AI Meeting Summarizer
+
+SHORT DESCRIPTION
+Upload a meeting recording to get a full AI transcript, concise summary, key decisions, and action items in a downloadable text file.
+
+FULL DESCRIPTION
+Spend less time replaying meetings and more time acting on what was discussed. AI Meeting Summarizer turns an audio or video recording into a searchable transcript and a concise summary.
+
+Upload an MP3, WAV, M4A, MP4, WebM, OGG, or FLAC recording. The app uses speech-to-text technology to create a transcript, then uses AI to identify the main discussion points, decisions, and action items. Results are presented in the browser and can be downloaded as a text file.
+
+Use AI Meeting Summarizer for team meetings, interviews, project updates, study groups, customer conversations, planning sessions, and personal voice recordings. A history view helps you find recent processed meetings and review previous results.
+
+The app is designed to make recorded conversations easier to revisit, share, and turn into practical next steps.
+
+FEATURES
+- Upload audio and video meeting recordings.
+- Support MP3, WAV, M4A, MP4, WebM, OGG, and FLAC files.
+- Generate a full word-for-word transcript.
+- Create a concise AI-powered meeting summary.
+- Extract key decisions and action items.
+- View transcript and summary results in the browser.
+- Download results as a text file.
+- Review recent meeting-processing history.
+- Use configurable transcription and summary models.
+- Support configurable summary styles, including bullet points.
+
+KEYWORDS
+AI meeting summarizer, meeting summary, meeting transcription, audio transcription, voice to text, speech to text, meeting notes, action items, meeting minutes, transcript generator, audio summarizer, video transcription, productivity tool, interview transcription, team meetings, project notes
+
+MARKETING NOTES
+Transcription and summaries should be reviewed for accuracy. Do not upload recordings unless you have the necessary consent and authorization to process them.

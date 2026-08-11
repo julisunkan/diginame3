@@ -1,0 +1,66 @@
+{% extends 'onlineidval/base.html' %}
+{% block title %}Online ID Validator{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="hero-card p-4 mb-4 text-center">
+      <i class="bi bi-shield-check display-4 mb-2"></i>
+      <h1 class="h2 fw-bold mb-1">Online ID Validator</h1>
+      <p class="mb-0 opacity-75">Upload an ID document image for AI-powered fraud detection and authenticity analysis.</p>
+    </div>
+
+    <div class="card p-4">
+      <h5 class="fw-semibold mb-3"><i class="bi bi-upload me-2 text-success"></i>Upload ID Document</h5>
+      <form id="validate-form" method="POST" action="{{ url_for('onlineidval.validate') }}" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <div class="mb-3">
+          <label class="form-label fw-medium">Select ID document image</label>
+          <input class="form-control form-control-lg" type="file" name="id_image"
+                 accept=".jpg,.jpeg,.png,.webp,.bmp" required/>
+          <div class="form-text">Supported: JPG, PNG, WebP, BMP &mdash; Max 5 MB &mdash; Passport, Driver's License, National ID</div>
+          <div class="alert alert-success py-2 mt-3 mb-0 small">
+            <i class="bi bi-shield-check me-1"></i>
+            Your ID card image is deleted immediately after analysis. This app does not store ID card images.
+          </div>
+        </div>
+        <div class="d-grid">
+          <button type="submit" class="btn btn-brand btn-lg">
+            <i class="bi bi-search me-2"></i>Analyse ID Document
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="row g-3 mt-2">
+      <div class="col-md-4">
+        <div class="card p-3 text-center h-100">
+          <i class="bi bi-eye fs-2 mb-2 text-success"></i>
+          <div class="fw-semibold">Visual Analysis</div>
+          <small class="text-muted">AI examines layout, fonts, security features</small>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card p-3 text-center h-100">
+          <i class="bi bi-patch-check fs-2 mb-2 text-success"></i>
+          <div class="fw-semibold">Fraud Detection</div>
+          <small class="text-muted">Detects editing, inconsistencies, fake IDs</small>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card p-3 text-center h-100">
+          <i class="bi bi-file-text fs-2 mb-2 text-success"></i>
+          <div class="fw-semibold">Detailed Report</div>
+          <small class="text-muted">Full breakdown with confidence score</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+document.getElementById('validate-form').addEventListener('submit', function () {
+  const button = this.querySelector('button[type="submit"]');
+  button.disabled = true;
+  button.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Analysing…';
+});
+</script>
+{% endblock %}

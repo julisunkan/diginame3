@@ -1,0 +1,23 @@
+create an independent folder (/otherapps) on this project. This folder will contain the following independent web apps. The web apps will be built using python/flask and SQLite database. Each web app must be completely independent where user can only navigate to it via their URL:
+
+1. Auto-Formatter for Docs (/otherapps/docsformatter) – Upload documents (PDF/Word/Google Docs) to format to clean style. Use SQLLITE database , and if necessary incorporate groq api, create an admin panel to manage all settings including api settings. Make it a PWA, with unique png and maskable png icons, use server-side download and don't use POPUP notifications to display error, success or confirmation messages. 
+
+2. AI Meeting Summarizer (/otherapps/meetingsummarizer) – Upload recordings or connect Zoom/Meet; get transcripts & summaries. Use SQLLITE database , and if necessary incorporate groq api, create an admin panel to manage all settings including api settings. Make it a PWA, with unique png and maskable png icons, use server-side download and don't use POPUP notifications to display error, success or confirmation messages. 
+
+
+3. Online ID Validator (/otherapps/onlineidval) – Detect fake/edited ID documents (for landlords, marketplaces, etc.). Use SQLLITE database , and if necessary incorporate groq api, create an admin panel to manage all settings including api settings. Make it a PWA, with unique png and maskable png icons, use server-side download and don't use POPUP notifications to display error, success or confirmation messages. 
+
+
+4. CSV-to-Anything Converter (/otherapps/csvany) – Convert CSVs to JSON, SQL, Excel, etc. Use SQLLITE database , and if necessary incorporate groq api, create an admin panel to manage all settings including api settings. Make it a PWA, with unique png and maskable png icons, use server-side download and don't use POPUP notifications to display error, success or confirmation messages. 
+
+
+5. Activity Book Generator (/otherapps/actibook) - Custom-themed word searches, Sudoku, crosswords & trivia — all in one book with options to set number of pages to be generated at once (bulk). Use SQLLITE database , and if necessary incorporate groq api, create an admin panel to manage all settings including api settings. Make it a PWA, with unique png and maskable png icons, use server-side download and don't use POPUP notifications to display error, success or confirmation messages. 
+
+
+
+
+
+
+
+
+

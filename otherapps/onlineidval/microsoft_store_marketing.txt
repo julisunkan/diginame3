@@ -1,0 +1,36 @@
+MICROSOFT STORE MARKETING COPY
+Online ID Validator
+
+SHORT DESCRIPTION
+Get AI-assisted identity-document image analysis for visible consistency checks, fraud indicators, confidence, and recommended next steps.
+
+FULL DESCRIPTION
+Online ID Validator provides a quick, AI-assisted first review of identity-document images. Upload a passport, driver's license, national ID, or another supported ID image and receive an analysis focused on visible document characteristics and potential warning signs.
+
+The app evaluates items such as photo presence, text readability, visible security features, possible editing, font consistency, and overall layout. It returns a VALID, SUSPICIOUS, or INVALID assessment with a confidence level, identified flags, an ID type estimate, and a practical recommendation.
+
+Privacy is built into the upload workflow. The ID card image is used only for the live analysis request and is deleted immediately after analysis, whether the request succeeds or fails. This app does not store ID card images. Text-based validation results and reports may be retained so they can be reviewed or downloaded.
+
+Online ID Validator is useful as an initial screening aid for workflows that need a quick visual review. It is not a replacement for official identity verification, government records, document-issuer checks, or a trained professional review.
+
+FEATURES
+- Analyze supported ID-document images with AI vision.
+- Support JPG, JPEG, PNG, WebP, BMP, and GIF image formats.
+- Review passports, driver's licenses, national IDs, and similar documents.
+- Check visible photo presence and text readability.
+- Check for visible security features.
+- Identify possible editing or layout inconsistencies.
+- Review font and document-layout consistency.
+- Receive VALID, SUSPICIOUS, or INVALID results.
+- Receive a HIGH, MEDIUM, or LOW confidence level.
+- See specific analysis flags and a recommendation.
+- Download a text validation report.
+- Review recent validation history.
+- Delete uploaded ID images immediately after analysis.
+- Do not retain ID card image files or usable image paths after processing.
+
+KEYWORDS
+ID validator, identity document verification, ID document analysis, ID card checker, document fraud detection, fake ID detection, passport checker, driver's license verification, national ID check, identity verification tool, document authenticity, image fraud detection, AI vision, privacy-focused verification, identity screening
+
+MARKETING NOTES
+Online ID Validator provides AI-assisted visual screening only. A result is not proof of identity, citizenship, eligibility, or document authenticity. Always follow applicable laws, privacy requirements, consent rules, and official verification procedures.

@@ -1,0 +1,83 @@
+{% extends 'onlineidval/base.html' %}
+{% block title %}Validation Result{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="d-flex align-items-center gap-2 mb-3">
+      <a href="{{ url_for('onlineidval.index') }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-left"></i> Back</a>
+      <h4 class="mb-0 fw-bold">Validation Result</h4>
+    </div>
+
+    {% if row['status'] == 'done' %}
+    <div class="card p-4 mb-3">
+      {% set verdict = row['verdict'] or 'UNKNOWN' %}
+      {% set vc = {'VALID':'success','SUSPICIOUS':'warning','INVALID':'danger'} %}
+      {% set vi = {'VALID':'shield-check','SUSPICIOUS':'shield-exclamation','INVALID':'shield-x'} %}
+      <div class="text-center mb-4">
+        <div class="display-4 mb-2 verdict-{{ verdict }}">
+          <i class="bi bi-{{ vi.get(verdict,'shield') }}"></i>
+        </div>
+        <h2 class="fw-bold verdict-{{ verdict }}">{{ verdict }}</h2>
+        <span class="badge bg-{{ vc.get(verdict,'secondary') }} fs-6">Confidence: {{ row['confidence'] or 'N/A' }}</span>
+        {% if details.get('id_type') %}<div class="mt-2 text-muted">ID Type: <strong>{{ details['id_type'] }}</strong></div>{% endif %}
+      </div>
+      <hr/>
+
+      {% if details.get('checks') %}
+      <h6 class="fw-semibold mb-3">Verification Checks</h6>
+      <div class="row g-2 mb-3">
+        {% for k, v in details['checks'].items() %}
+        <div class="col-md-6">
+          <div class="d-flex align-items-center gap-2 p-2 rounded {{ 'bg-success bg-opacity-10' if v else 'bg-danger bg-opacity-10' }}">
+            <i class="bi bi-{{ 'check-circle-fill text-success' if v else 'x-circle-fill text-danger' }}"></i>
+            <span class="small">{{ k.replace('_',' ').title() }}</span>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      {% if details.get('flags') %}
+      <h6 class="fw-semibold mb-2 text-warning"><i class="bi bi-flag me-1"></i>Flags</h6>
+      <ul class="mb-3">{% for f in details['flags'] %}<li class="small text-warning">{{ f }}</li>{% endfor %}</ul>
+      {% endif %}
+
+      {% if details.get('recommendation') %}
+      <div class="alert alert-{{ vc.get(verdict,'secondary') }} py-2">
+        <i class="bi bi-lightbulb me-1"></i><strong>Recommendation:</strong> {{ details['recommendation'] }}
+      </div>
+      {% endif %}
+
+      <div class="d-flex justify-content-between align-items-center mt-3">
+        <small class="text-muted">{{ row['original_name'] }} &mdash; {{ row['created_at'][:16].replace('T',' ') }}</small>
+        {% if row['report_path'] %}
+        <a href="{{ url_for('onlineidval.download', uid=row['id']) }}" class="btn btn-sm btn-brand">
+          <i class="bi bi-download me-1"></i> Download Report
+        </a>
+        {% endif %}
+      </div>
+      <hr class="my-4"/>
+      <h6 class="fw-semibold"><i class="bi bi-flag me-1"></i>Report this generated content</h6>
+      <p class="small text-muted">Report an issue with this AI-generated validation to the administrator.</p>
+      <form method="POST" action="{{ url_for('onlineidval.report_content', uid=row['id']) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <div class="row g-2">
+          <div class="col-md-5"><select name="reason" class="form-select form-select-sm" required>
+            <option value="">Choose a reason</option><option value="inaccurate">Inaccurate or misleading</option>
+            <option value="harmful">Harmful or unsafe</option><option value="copyright">Copyright or privacy concern</option><option value="other">Other</option>
+          </select></div>
+          <div class="col-md-7"><input name="details" class="form-control form-control-sm" maxlength="2000" placeholder="Optional details"/></div>
+        </div>
+        <button class="btn btn-sm btn-outline-danger mt-2"><i class="bi bi-flag me-1"></i>Submit report</button>
+      </form>
+    </div>
+    {% elif row['status'] == 'removed' %}
+    <div class="alert alert-warning"><i class="bi bi-shield-exclamation me-2"></i>This generated item was removed after an administrator review.</div>
+    {% elif row['status'] == 'error' %}
+    <div class="alert alert-danger"><i class="bi bi-exclamation-triangle me-2"></i><strong>Failed:</strong> {{ row['error_msg'] }}</div>
+    {% else %}
+    <div class="alert alert-info"><i class="bi bi-hourglass-split me-2"></i>Processing…</div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

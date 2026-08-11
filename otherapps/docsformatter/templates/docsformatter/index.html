@@ -1,0 +1,55 @@
+{% extends 'docsformatter/base.html' %}
+{% block title %}Auto-Formatter for Docs{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="hero-card p-4 mb-4 text-center">
+      <i class="bi bi-file-earmark-text display-4 mb-2"></i>
+      <h1 class="h2 fw-bold mb-1">Auto-Formatter for Docs</h1>
+      <p class="mb-0 opacity-75">Upload PDF, Word, or text files and get a clean, professionally formatted version.</p>
+    </div>
+
+    <div class="card p-4">
+      <h5 class="fw-semibold mb-3"><i class="bi bi-upload me-2 text-primary"></i>Upload Document</h5>
+      <form method="POST" action="{{ url_for('docsformatter.format_doc') }}" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <div class="mb-3">
+          <label class="form-label fw-medium">Select document to format</label>
+          <input class="form-control form-control-lg" type="file" name="document"
+                 accept=".pdf,.docx,.doc,.txt" required/>
+          <div class="form-text">Supported: PDF, Word (.docx, .doc), Plain Text (.txt) &mdash; Max 5 MB</div>
+        </div>
+        <div class="d-grid">
+          <button type="submit" class="btn btn-brand btn-lg">
+            <i class="bi bi-magic me-2"></i>Format Document
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="row g-3 mt-2">
+      <div class="col-md-4">
+        <div class="card p-3 text-center h-100">
+          <i class="bi bi-file-pdf text-danger fs-2 mb-2"></i>
+          <div class="fw-semibold">PDF Support</div>
+          <small class="text-muted">Extract &amp; reformat text from PDF files</small>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card p-3 text-center h-100">
+          <i class="bi bi-file-word text-primary fs-2 mb-2"></i>
+          <div class="fw-semibold">Word Docs</div>
+          <small class="text-muted">Process .docx and .doc documents</small>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card p-3 text-center h-100">
+          <i class="bi bi-robot text-success fs-2 mb-2"></i>
+          <div class="fw-semibold">AI-Powered</div>
+          <small class="text-muted">Groq AI applies professional formatting</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

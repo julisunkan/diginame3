@@ -1,0 +1,32 @@
+MICROSOFT STORE MARKETING COPY
+Activity Book Generator
+
+SHORT DESCRIPTION
+Create personalized printable activity books with word searches, Sudoku, crosswords, and trivia, then download them as PDF files.
+
+FULL DESCRIPTION
+Turn any favorite theme into a ready-to-print activity book in minutes. Activity Book Generator creates custom puzzle books for classrooms, families, parties, learning activities, quiet time, and creative projects.
+
+Enter a theme such as space, animals, history, sports, or the ocean. Choose an easy, medium, or hard difficulty level, select the activities you want, set the number of pages, and generate a complete PDF activity book.
+
+The app supports four engaging activity types: word searches, Sudoku puzzles, trivia quizzes, and crosswords. Word searches and Sudoku are generated directly by the app, while trivia and crossword content can be enhanced with AI when configured by the app administrator. Your finished book can be viewed online and downloaded as a PDF for printing or sharing.
+
+Whether you are preparing educational materials, building a children's activity pack, creating a themed gift, or looking for a fun offline challenge, Activity Book Generator makes custom activity books simple to produce.
+
+FEATURES
+- Create themed activity books from a single topic.
+- Generate word-search puzzles with word lists.
+- Generate Sudoku puzzles.
+- Include trivia quizzes and crossword puzzles.
+- Choose easy, medium, or hard difficulty.
+- Select the number of pages for each book.
+- Combine multiple activity types in one book.
+- Download finished activity books as PDF files.
+- Review previously generated books in history.
+- Create printable materials for education, families, events, and entertainment.
+
+KEYWORDS
+activity book, printable activity book, puzzle book, word search, Sudoku, crossword puzzle, trivia quiz, educational worksheets, classroom activities, kids activities, printable puzzles, themed worksheets, PDF activity book, family games, learning activities, puzzle generator
+
+MARKETING NOTES
+Activity Book Generator creates activity materials and entertainment content. Generated content should be reviewed before use in formal educational or commercial materials.

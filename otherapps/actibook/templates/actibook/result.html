@@ -1,0 +1,49 @@
+{% extends 'actibook/base.html' %}
+{% block title %}Activity Book Ready{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="d-flex align-items-center gap-2 mb-3">
+      <a href="{{ url_for('actibook.index') }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-left"></i> Back</a>
+      <h4 class="mb-0 fw-bold">Activity Book</h4>
+    </div>
+
+    {% if row['status'] == 'done' %}
+    <div class="card p-4 mb-3 text-center">
+      <i class="bi bi-book-fill display-1 text-danger mb-3"></i>
+      <h3 class="fw-bold">Your Activity Book is Ready!</h3>
+      <p class="text-muted mb-1"><strong>Theme:</strong> {{ row['theme'].title() }}</p>
+      <p class="text-muted mb-1"><strong>Difficulty:</strong> {{ row['difficulty'].title() }}</p>
+      <p class="text-muted mb-1"><strong>Activities:</strong> {{ row['activities'].replace(',',' · ').replace('_',' ').title() }}</p>
+      <p class="text-muted mb-4"><small>Generated {{ row['created_at'][:16].replace('T',' ') }} UTC</small></p>
+      <a href="{{ url_for('actibook.download', uid=row['id']) }}" class="btn btn-brand btn-lg px-5">
+        <i class="bi bi-download me-2"></i>Download PDF
+      </a>
+      <hr class="my-4"/>
+      <div class="text-start">
+        <h6 class="fw-semibold"><i class="bi bi-flag me-1"></i>Report this generated content</h6>
+        <p class="small text-muted">If this activity book contains harmful, inaccurate, or inappropriate content, tell the administrator.</p>
+        <form method="POST" action="{{ url_for('actibook.report_content', uid=row['id']) }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+          <div class="row g-2">
+            <div class="col-md-5"><select name="reason" class="form-select form-select-sm" required>
+              <option value="">Choose a reason</option><option value="inaccurate">Inaccurate or misleading</option>
+              <option value="harmful">Harmful or unsafe</option><option value="copyright">Copyright or privacy concern</option><option value="other">Other</option>
+            </select></div>
+            <div class="col-md-7"><input name="details" class="form-control form-control-sm" maxlength="2000" placeholder="Optional details"/></div>
+          </div>
+          <button class="btn btn-sm btn-outline-danger mt-2"><i class="bi bi-flag me-1"></i>Submit report</button>
+        </form>
+      </div>
+    </div>
+    {% elif row['status'] == 'removed' %}
+    <div class="alert alert-warning"><i class="bi bi-shield-exclamation me-2"></i>This generated item was removed after an administrator review.</div>
+    {% elif row['status'] == 'error' %}
+    <div class="alert alert-danger"><i class="bi bi-exclamation-triangle me-2"></i><strong>Failed:</strong> {{ row['error_msg'] }}</div>
+    <a href="{{ url_for('actibook.index') }}" class="btn btn-brand">Try Again</a>
+    {% else %}
+    <div class="alert alert-info"><i class="bi bi-hourglass-split me-2"></i>Generating your book…</div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

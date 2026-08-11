@@ -1,0 +1,28 @@
+ID VALIDATION REPORT
+==================================================
+File      : id.png
+Generated : 2026-08-07T17:37:29.923197 UTC
+
+VERDICT      : INVALID
+CONFIDENCE   : HIGH
+ID TYPE      : Driver's License
+
+CHECKS
+──────────────────────────────
+  ✓ Photo Present
+  ✓ Text Readable
+  ✗ Security Features Visible
+  ✗ No Obvious Editing
+  ✓ Consistent Fonts
+  ✓ Proper Layout
+
+FLAGS
+──────────────────────────────
+  • Explicitly marked as SAMPLE
+  • Placeholder data (99 999 999)
+  • Fictional address (123 Main Street)
+  • Not a valid government-issued document
+
+RECOMMENDATION
+──────────────────────────────
+  Reject; this is a sample card used for demonstration purposes, not a valid ID.

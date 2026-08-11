@@ -1,0 +1,160 @@
+# AI Prompt: DigitalSkeleton Services Landing Page
+
+Create a modern, premium, responsive landing page for a mobile app development company named **DigitalSkeleton Services**. The design should look sleek, futuristic, and trustworthy with a clean user experience.
+
+## Brand Identity
+
+* Company Name: DigitalSkeleton Services
+* Industry: Mobile App Development
+* Tagline: **Transforming Ideas into Powerful Mobile Experiences**
+* Primary Colors: Deep Blue (#0F172A), Electric Blue (#2563EB), White (#FFFFFF), with subtle Cyan accents.
+* Style: Modern, minimalist, high-tech, premium.
+* Animations: Smooth fade-ins, hover effects, floating elements, gradient backgrounds, and subtle parallax scrolling.
+
+## Hero Section
+
+Include:
+
+* Large headline:
+  **We Build Mobile Apps That Grow Businesses**
+* Supporting text:
+  "DigitalSkeleton Services designs and develops high-performance Android and iOS applications tailored to startups, businesses, and enterprises."
+* Primary CTA:
+  **Start Your Project**
+* Secondary CTA:
+  **View Portfolio**
+* Background:
+  A futuristic illustration of smartphones, code, UI mockups, and digital network effects.
+
+## About Section
+
+Title:
+**Who We Are**
+
+Content:
+"DigitalSkeleton Services is a professional mobile application development company dedicated to building innovative, scalable, and user-friendly digital products. From concept to launch, we help businesses transform ideas into successful mobile applications."
+
+## Services Section
+
+Display service cards with icons.
+
+Services:
+
+* Android App Development
+* iOS App Development
+* Cross-Platform Development (Flutter & React Native)
+* UI/UX Design
+* Backend & API Development
+* App Maintenance & Support
+* App Store Deployment
+* Business Consultation
+
+Each card should have a modern icon, hover animation, and concise description.
+
+## Why Choose Us
+
+Use four feature cards:
+
+* Experienced Developers
+* Fast Delivery
+* Secure & Scalable Solutions
+* Ongoing Technical Support
+
+Include attractive icons and subtle animations.
+
+## Our Process
+
+Create a four-step timeline:
+
+1. Discovery
+2. Design
+3. Development
+4. Launch & Support
+
+Use connecting lines and animated step indicators.
+
+## Portfolio Preview
+
+Display three modern mobile app mockups with placeholders.
+
+Include categories such as:
+
+* E-Commerce
+* FinTech
+* Healthcare
+* Education
+* Logistics
+
+Each project card should feature hover effects and a "View Project" button.
+
+## Testimonials
+
+Include three testimonial cards with customer avatars, names, company names, and five-star ratings.
+
+Example:
+"DigitalSkeleton Services delivered an outstanding app that exceeded our expectations."
+
+## Technologies
+
+Display technology logos in a responsive grid.
+
+Include:
+
+* Flutter
+* React Native
+* Kotlin
+* Swift
+* Firebase
+* Node.js
+* Laravel
+* MongoDB
+* PostgreSQL
+* AWS
+
+## Call to Action
+
+Headline:
+**Ready to Build Your Next Mobile App?**
+
+Text:
+"Let's transform your vision into an amazing mobile experience."
+
+Button:
+**Book a Free Consultation**
+
+## Footer
+
+Include:
+
+* Company Logo
+* Quick Links
+* Services
+* Contact Information : support@digitalskeleton.name.ng
+* Email : support@digitalskeleton.name.ng
+* Phone Number 
+* Social Media Icons
+* Copyright
+
+Footer text:
+© 2026 DigitalSkeleton Services. All Rights Reserved.
+
+## Technical Requirements
+
+* Fully responsive on desktop, tablet, and mobile.
+* SEO-friendly HTML structure.
+* Accessibility-compliant.
+* Optimized performance.
+* Smooth scrolling navigation.
+* Sticky navigation bar.
+* Dark mode aesthetic with premium gradients.
+* Rounded cards with soft shadows.
+* Modern typography using Inter or Poppins.
+* Glassmorphism effects where appropriate.
+* Animated counters for completed projects and satisfied clients.
+* Contact form with validation.
+* Newsletter subscription section.
+* Loading animation.
+* Scroll-to-top button.
+* Professional micro-interactions.
+
+The final design should rival the quality of leading software companies such as Stripe, Linear, Vercel, and modern SaaS startups, with a polished, conversion-focused experience that encourages visitors to contact DigitalSkeleton Services for mobile app development.

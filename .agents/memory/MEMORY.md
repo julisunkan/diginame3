@@ -1,0 +1,1 @@
+- [ID image privacy](id-image-privacy.md) — ID Validator must delete uploaded ID images immediately after analysis and never retain their filesystem paths.

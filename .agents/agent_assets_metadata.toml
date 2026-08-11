@@ -1,0 +1,20 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "8mvwitOA_pOSD8kr-4Y6L"
+uri = "file://DEPLOYMENT_INSTRUCTIONS.txt"
+type = "text"
+title = "Render + Firebase Deployment Instructions"
+
+[[outputs]]
+id = "iMml_65LdTUwsZ5rMTb6s"
+uri = "file://static/icons/icon-512x512.png"
+type = "image"
+title = "App Icon (512×512)"
+
+[[outputs]]
+id = "Dz8xLNeYz35UrMnamvGk7"
+uri = "file://static/icons/maskable-icon-512x512.png"
+type = "image"
+title = "Maskable Icon (512×512)"

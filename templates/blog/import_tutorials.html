@@ -1,0 +1,85 @@
+{% extends "blog/base.html" %}
+
+{% block title %}Import Posts — {{ site_settings.blog_title }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 animate__animated animate__fadeInDown">
+    <div>
+        <h1 class="text-white mb-1" style="font-size:1.8rem;font-weight:800;">
+            <i class="fas fa-upload me-2"></i>Import Posts
+        </h1>
+        <p class="text-white-50 mb-0 small">Upload a JSON file to restore or migrate posts</p>
+    </div>
+    <a href="{{ url_for('blog_admin_dashboard', blog_id=blog_id) }}" class="btn btn-outline-light btn-sm">
+        <i class="fas fa-arrow-left me-2"></i>Dashboard
+    </a>
+</div>
+
+<div class="row justify-content-center animate__animated animate__fadeIn">
+    <div class="col-lg-7">
+
+        <div class="card blog-card mb-4">
+            <div class="card-body p-4">
+                <h6 class="fw-bold mb-3" style="color:#a5b4fc;">
+                    <i class="fas fa-info-circle me-2"></i>How Import Works
+                </h6>
+                <ul class="text-white-50 small mb-0 ps-3">
+                    <li class="mb-1">Upload a <code>.json</code> file exported from this system.</li>
+                    <li class="mb-1">Posts with the same title as an existing post will be skipped.</li>
+                    <li class="mb-1">Tags and original creation dates are preserved when available.</li>
+                    <li>Invalid or incomplete entries are ignored automatically.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card blog-card">
+            <div class="card-body p-4">
+                <form method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                    <div class="mb-4">
+                        <label for="file" class="form-label fw-semibold">Select JSON File</label>
+                        <div class="file-drop-zone" id="dropZone">
+                            <i class="fas fa-cloud-upload-alt fa-2x mb-2" style="color:#a5b4fc;"></i>
+                            <p class="mb-1 text-white">Drag & drop a JSON file here</p>
+                            <p class="text-white-50 small mb-3">or click to browse</p>
+                            <input type="file" class="form-control" id="file" name="file"
+                                   accept=".json" required>
+                            <p class="mt-2 text-white-50 small" id="fileNameDisplay"></p>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-3">
+                        <button type="submit" class="btn btn-gradient px-4 py-2 fw-semibold">
+                            <i class="fas fa-upload me-2"></i>Import Posts
+                        </button>
+                        <a href="{{ url_for('blog_admin_dashboard', blog_id=blog_id) }}" class="btn btn-outline-light py-2">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+const fileInput = document.getElementById('file');
+const display   = document.getElementById('fileNameDisplay');
+const dropZone  = document.getElementById('dropZone');
+
+fileInput.addEventListener('change', () => {
+    display.textContent = fileInput.files[0] ? '📄 ' + fileInput.files[0].name : '';
+});
+
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drop-active'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drop-active'));
+dropZone.addEventListener('drop', e => {
+    e.preventDefault();
+    dropZone.classList.remove('drop-active');
+    const files = e.dataTransfer.files;
+    if (files.length) { fileInput.files = files; display.textContent = '📄 ' + files[0].name; }
+});
+</script>
+{% endblock %}

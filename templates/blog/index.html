@@ -1,0 +1,208 @@
+{% extends "blog/base.html" %}
+
+{% block title %}{{ site_settings.blog_title }} — Posts{% endblock %}
+
+{% block content %}
+
+<div id="readingProgress" style="position:fixed;top:0;left:0;height:3px;width:0%;background:linear-gradient(90deg,#4f46e5,#a855f7,#f43f5e);z-index:9999;transition:width .15s ease;"></div>
+
+{% set slide_posts = posts | selectattr('featured_image') | list %}
+<div class="hero-slideshow mb-5 animate__animated animate__fadeIn" id="heroSlideshow">
+    <div class="hero-slides-track" id="slidesTrack">
+        {% if slide_posts %}
+            {% for post in slide_posts[:5] %}
+            <div class="hero-slide" data-index="{{ loop.index0 }}">
+                <div class="hero-slide-img ken-burns" style="background-image:url('{{ post.featured_image }}');"></div>
+                <div class="hero-slide-overlay"></div>
+                <div class="hero-slide-content">
+                    <div class="hero-slide-tags mb-2">
+                        {% for t in post.tags[:3] %}
+                        <a href="{{ url_for('blog_category', blog_id=blog_id, tag=t|slugify) }}" class="tag-chip tag-chip-hero">{{ t }}</a>
+                        {% endfor %}
+                    </div>
+                    <h2 class="hero-slide-title">{{ post.title }}</h2>
+                    <p class="hero-slide-excerpt">{{ (post.content | striptags)[:120] }}…</p>
+                    <a href="{{ url_for('blog_post_detail', blog_id=blog_id, post_id=post.id) }}" class="btn btn-light hero-slide-btn">
+                        Read More <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="hero-slide hero-slide-branded" data-index="0">
+                <div class="hero-slide-branded-bg"></div>
+                <div class="hero-slide-content text-center">
+                    <div class="hero-logo-icon mb-3"><i class="fas fa-graduation-cap"></i></div>
+                    <h2 class="hero-slide-title">{{ site_settings.blog_title }}</h2>
+                    <p class="hero-slide-excerpt">{{ site_settings.blog_description }}</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    {% if slide_posts|length > 1 %}
+    <button class="hero-nav hero-prev" onclick="slideNav(-1)" aria-label="Previous">
+        <i class="fas fa-chevron-left"></i>
+    </button>
+    <button class="hero-nav hero-next" onclick="slideNav(1)" aria-label="Next">
+        <i class="fas fa-chevron-right"></i>
+    </button>
+    <div class="hero-dots" id="heroDots">
+        {% for post in slide_posts[:5] %}
+        <button class="hero-dot{% if loop.first %} active{% endif %}" onclick="goToSlide({{ loop.index0 }})" aria-label="Slide {{ loop.index }}"></button>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+
+{% if all_tags %}
+<div class="category-filter-bar mb-4 animate__animated animate__fadeInDown" id="filterBar">
+    <button class="category-pill active" data-filter="all" onclick="filterPosts('all', this)">
+        <i class="fas fa-layer-group me-1"></i>All
+    </button>
+    {% for tag in all_tags %}
+    <a href="{{ url_for('blog_category', blog_id=blog_id, tag=tag|slugify) }}" class="category-pill" data-filter="{{ tag|slugify }}">
+        {{ tag }}
+    </a>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="row g-4" id="postsGrid">
+    {% if posts %}
+        {% for post in posts %}
+        <div class="col-md-6 col-lg-4 post-card-wrap reveal-card"
+             data-tags="{{ post.tags | map('lower') | join(',') }}"
+             style="animation-delay:{{ loop.index0 * 0.07 }}s">
+            <div class="card blog-card h-100 tilt-card">
+                {% if post.featured_image %}
+                <div class="card-img-wrap">
+                    <img src="{{ post.featured_image }}" class="card-img-top" alt="{{ post.title }}"
+                         loading="lazy" style="height:200px;object-fit:cover;">
+                    <div class="img-overlay"></div>
+                </div>
+                {% else %}
+                <div class="card-img-placeholder">
+                    <i class="fas fa-book-open"></i>
+                </div>
+                {% endif %}
+
+                <div class="card-body d-flex flex-column">
+                    {% if post.tags %}
+                    <div class="post-tags mb-2">
+                        {% for tag in post.tags %}
+                        <a href="{{ url_for('blog_category', blog_id=blog_id, tag=tag|slugify) }}" class="tag-chip">{{ tag }}</a>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <h5 class="card-title">{{ post.title }}</h5>
+                    <p class="card-text flex-grow-1">
+                        {{ (post.content | striptags)[:130] }}{% if post.content|length > 130 %}…{% endif %}
+                    </p>
+
+                    <div class="d-flex justify-content-end mt-3">
+                        <a href="{{ url_for('blog_post_detail', blog_id=blog_id, post_id=post.id) }}" class="btn btn-sm btn-gradient">
+                            Read <i class="fas fa-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+        <div class="col-12 d-none text-center py-4" id="noResults">
+            <div class="card blog-card">
+                <div class="card-body py-4">
+                    <i class="fas fa-search fa-2x mb-3 text-muted"></i>
+                    <h5 class="text-muted">No posts in this category yet</h5>
+                </div>
+            </div>
+        </div>
+
+    {% else %}
+        <div class="col-12 text-center">
+            <div class="card blog-card animate__animated animate__fadeIn">
+                <div class="card-body py-5">
+                    <i class="fas fa-book-open fa-3x mb-3 text-muted"></i>
+                    <h5 class="card-title">No Posts Yet</h5>
+                    <p class="card-text">Check back later for new posts!</p>
+                    {% if blog_admin_logged_in %}
+                    <a href="{{ url_for('blog_new_post', blog_id=blog_id) }}" class="btn btn-gradient mt-2">
+                        <i class="fas fa-plus me-2"></i>Create First Post
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+let currentSlide = 0;
+const slides = document.querySelectorAll('.hero-slide');
+const dots   = document.querySelectorAll('.hero-dot');
+let autoTimer;
+
+function goToSlide(n) {
+    if (!slides.length) return;
+    slides[currentSlide].classList.remove('active');
+    if (dots[currentSlide]) dots[currentSlide].classList.remove('active');
+    currentSlide = (n + slides.length) % slides.length;
+    slides[currentSlide].classList.add('active');
+    if (dots[currentSlide]) dots[currentSlide].classList.add('active');
+}
+
+function slideNav(dir) {
+    clearInterval(autoTimer);
+    goToSlide(currentSlide + dir);
+    autoTimer = setInterval(() => goToSlide(currentSlide + 1), 5000);
+}
+
+if (slides.length) {
+    slides[0].classList.add('active');
+    autoTimer = setInterval(() => goToSlide(currentSlide + 1), 5000);
+}
+
+function filterPosts(filter, btn) {
+    document.querySelectorAll('.category-pill').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    const cards = document.querySelectorAll('.post-card-wrap');
+    let visible = 0;
+    cards.forEach(card => {
+        const tags = card.dataset.tags || '';
+        const show = filter === 'all' || tags.split(',').includes(filter);
+        card.style.display = show ? '' : 'none';
+        if (show) visible++;
+    });
+    const noRes = document.getElementById('noResults');
+    if (noRes) noRes.classList.toggle('d-none', visible > 0);
+}
+
+document.querySelectorAll('.tilt-card').forEach(card => {
+    card.addEventListener('mousemove', e => {
+        const r = card.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width  - 0.5;
+        const y = (e.clientY - r.top)  / r.height - 0.5;
+        card.style.transform = `perspective(600px) rotateY(${x*10}deg) rotateX(${-y*10}deg) translateY(-6px)`;
+    });
+    card.addEventListener('mouseleave', () => { card.style.transform = ''; });
+});
+
+const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+        if (e.isIntersecting) {
+            e.target.classList.add('animate__animated','animate__fadeInUp');
+            observer.unobserve(e.target);
+        }
+    });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal-card').forEach(el => observer.observe(el));
+
+window.addEventListener('scroll', () => {
+    const el  = document.documentElement;
+    const pct = (el.scrollTop / (el.scrollHeight - el.clientHeight)) * 100;
+    document.getElementById('readingProgress').style.width = pct + '%';
+});
+</script>
+{% endblock %}

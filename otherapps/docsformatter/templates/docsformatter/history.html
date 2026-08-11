@@ -1,0 +1,44 @@
+{% extends 'docsformatter/base.html' %}
+{% block title %}Formatting History{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h4 class="fw-bold mb-0"><i class="bi bi-clock-history me-2"></i>Formatting History</h4>
+  <a href="{{ url_for('docsformatter.index') }}" class="btn btn-brand btn-sm"><i class="bi bi-plus me-1"></i>Format New</a>
+</div>
+{% if rows %}
+<div class="card">
+  <div class="table-responsive">
+    <table class="table table-hover mb-0">
+      <thead class="table-light"><tr>
+        <th>File</th><th>Status</th><th>Date</th><th>Action</th>
+      </tr></thead>
+      <tbody>
+      {% for r in rows %}
+      <tr>
+        <td class="fw-medium">{{ r['original_name'] }}</td>
+        <td>
+          {% if r['status'] == 'done' %}<span class="badge bg-success">Done</span>
+          {% elif r['status'] == 'error' %}<span class="badge bg-danger">Error</span>
+          {% else %}<span class="badge bg-secondary">{{ r['status'] }}</span>{% endif %}
+        </td>
+        <td><small class="text-muted">{{ r['created_at'][:16].replace('T',' ') }}</small></td>
+        <td>
+          {% if r['status'] == 'done' %}
+          <a href="{{ url_for('docsformatter.result', uid=r['id']) }}" class="btn btn-sm btn-outline-primary me-1">View</a>
+          <a href="{{ url_for('docsformatter.download', uid=r['id']) }}" class="btn btn-sm btn-brand">Download</a>
+          {% elif r['status'] == 'error' %}
+          <small class="text-danger">{{ r['error_msg'][:60] }}</small>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% else %}
+<div class="text-center py-5 text-muted">
+  <i class="bi bi-inbox display-4 d-block mb-3"></i>No documents formatted yet.
+</div>
+{% endif %}
+{% endblock %}

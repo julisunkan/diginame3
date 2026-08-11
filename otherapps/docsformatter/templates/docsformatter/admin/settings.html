@@ -1,0 +1,65 @@
+{% extends 'docsformatter/base.html' %}
+{% block title %}Admin Settings – DocFormatter{% endblock %}
+{% block content %}
+<div class="d-flex align-items-center gap-2 mb-4">
+  <a href="{{ url_for('docsformatter.admin_dashboard') }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-left"></i></a>
+  <h4 class="fw-bold mb-0">Admin Settings</h4>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="card p-4 mb-4">
+      <h5 class="fw-semibold mb-3"><i class="bi bi-cpu me-2 text-primary"></i>API Settings</h5>
+      <form method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <input type="hidden" name="action" value="api"/>
+        <div class="mb-3">
+          <label class="form-label fw-medium">Groq API Key</label>
+          <input type="password" class="form-control" name="groq_api_key"
+                 value="{{ settings['groq_api_key'] }}" placeholder="gsk_…"/>
+          <div class="form-text">Get your key at <a href="https://console.groq.com" target="_blank">console.groq.com</a></div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-medium">Groq Model</label>
+          <select class="form-select" name="groq_model">
+            {% for m in ['llama-3.1-8b-instant','llama-3.3-70b-versatile','mixtral-8x7b-32768'] %}
+            <option value="{{ m }}" {% if settings['groq_model']==m %}selected{% endif %}>{{ m }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-medium">Formatting Style</label>
+          <select class="form-select" name="format_style">
+            {% for s in ['professional','academic','casual','technical'] %}
+            <option value="{{ s }}" {% if settings['format_style']==s %}selected{% endif %}>{{ s.title() }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <button type="submit" class="btn btn-brand">Save API Settings</button>
+      </form>
+    </div>
+  </div>
+  <div class="col-lg-5">
+    <div class="card p-4">
+      <h5 class="fw-semibold mb-3"><i class="bi bi-key me-2 text-warning"></i>Change Password</h5>
+      <form method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <input type="hidden" name="action" value="password"/>
+        <div class="mb-3">
+          <label class="form-label fw-medium">Current Password</label>
+          <input type="password" class="form-control" name="current_password" required/>
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-medium">New Password</label>
+          <input type="password" class="form-control" name="new_password" required minlength="6"/>
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-medium">Confirm Password</label>
+          <input type="password" class="form-control" name="confirm_password" required/>
+        </div>
+        <button type="submit" class="btn btn-warning">Update Password</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends 'csvany/base.html' %}
+{% block title %}Admin Settings – CSV Converter{% endblock %}
+{% block content %}
+<div class="d-flex align-items-center gap-2 mb-4">
+  <a href="{{ url_for('csvany.admin_dashboard') }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-left"></i></a>
+  <h4 class="fw-bold mb-0">Admin Settings</h4>
+</div>
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="card p-4 mb-4">
+      <h5 class="fw-semibold mb-3"><i class="bi bi-sliders me-2" style="color:#D97706"></i>App Settings</h5>
+      <form method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <input type="hidden" name="action" value="app"/>
+        <div class="mb-3">
+          <label class="form-label fw-medium">Default Output Format</label>
+          <select class="form-select" name="default_format">
+            {% for f in formats %}
+            <option value="{{ f }}" {% if settings['default_format']==f %}selected{% endif %}>{{ f.upper() }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-medium">SQL Table Name</label>
+          <input type="text" class="form-control" name="sql_table_name" value="{{ settings['sql_table_name'] }}" placeholder="data"/>
+          <div class="form-text">Used when generating SQL INSERT statements.</div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-medium">Max Rows to Process</label>
+          <input type="number" class="form-control" name="max_rows" value="{{ settings['max_rows'] }}" min="100" max="100000"/>
+        </div>
+        <button type="submit" class="btn btn-brand">Save Settings</button>
+      </form>
+    </div>
+  </div>
+  <div class="col-lg-5">
+    <div class="card p-4">
+      <h5 class="fw-semibold mb-3"><i class="bi bi-key me-2 text-warning"></i>Change Password</h5>
+      <form method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <input type="hidden" name="action" value="password"/>
+        <div class="mb-3"><label class="form-label fw-medium">Current Password</label>
+          <input type="password" class="form-control" name="current_password" required/></div>
+        <div class="mb-3"><label class="form-label fw-medium">New Password</label>
+          <input type="password" class="form-control" name="new_password" required minlength="6"/></div>
+        <div class="mb-3"><label class="form-label fw-medium">Confirm Password</label>
+          <input type="password" class="form-control" name="confirm_password" required/></div>
+        <button type="submit" class="btn btn-warning">Update Password</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

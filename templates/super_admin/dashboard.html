@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+        .top-bar {
+            background: rgba(255,255,255,.05);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,.08);
+            padding: 14px 24px;
+            display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 100;
+        }
+        .brand {
+            font-size: 1.1rem; font-weight: 800;
+            background: linear-gradient(45deg, #a78bfa, #f472b6);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+            text-decoration: none;
+        }
+        .btn-action {
+            background: linear-gradient(135deg, #7c3aed, #a855f7);
+            color: #fff; border: none; border-radius: 10px;
+            padding: 8px 18px; font-size: .85rem; font-weight: 600;
+            text-decoration: none; transition: all .2s;
+            display: inline-flex; align-items: center; gap: 6px;
+            cursor: pointer;
+        }
+        .btn-action:hover { color:#fff; background:linear-gradient(135deg,#6d28d9,#9333ea); transform:translateY(-1px); box-shadow:0 8px 20px rgba(124,58,237,.4); }
+        .btn-danger-soft {
+            background: rgba(239,68,68,.15);
+            color: #f87171; border: 1px solid rgba(239,68,68,.3);
+            border-radius: 8px; padding: 6px 12px; font-size: .8rem;
+            font-weight: 600; transition: all .2s; cursor: pointer;
+            display: inline-flex; align-items: center; gap: 5px;
+        }
+        .btn-danger-soft:hover { background: rgba(239,68,68,.3); color:#fff; }
+        .btn-outline-soft {
+            background: rgba(255,255,255,.07);
+            color: rgba(255,255,255,.8); border: 1px solid rgba(255,255,255,.15);
+            border-radius: 8px; padding: 6px 12px; font-size: .8rem;
+            font-weight: 600; transition: all .2s; text-decoration: none;
+            display: inline-flex; align-items: center; gap: 5px;
+        }
+        .btn-outline-soft:hover { background:rgba(255,255,255,.15); color:#fff; }
+        .content { max-width: 1100px; margin: 0 auto; padding: 32px 20px 60px; }
+        .page-header { margin-bottom: 32px; }
+        .page-header h1 { font-size: 1.8rem; font-weight: 900; margin-bottom: 6px; }
+        .page-header p { color: rgba(255,255,255,.5); font-size: .9rem; }
+        .stats-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; margin-bottom: 32px; }
+        .stat-card {
+            background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);
+            border-radius: 16px; padding: 20px; text-align: center;
+        }
+        .stat-val { font-size: 2rem; font-weight: 900; color: #a78bfa; }
+        .stat-lbl { font-size: .8rem; color: rgba(255,255,255,.5); margin-top: 4px; text-transform: uppercase; letter-spacing: .05em; }
+        .section-title { font-size: .85rem; font-weight: 700; color: rgba(255,255,255,.5); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 16px; }
+        .blog-row {
+            background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.08);
+            border-radius: 14px; padding: 20px 24px; margin-bottom: 12px;
+            display: flex; align-items: center; gap: 16px; transition: all .2s;
+        }
+        .blog-row:hover { border-color: rgba(167,139,250,.3); background: rgba(255,255,255,.07); }
+        .blog-row-icon {
+            width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
+            background: linear-gradient(135deg, #7c3aed, #a855f7);
+            display: flex; align-items: center; justify-content: center; font-size: 1rem;
+        }
+        .blog-row-info { flex: 1; min-width: 0; }
+        .blog-row-name { font-weight: 700; font-size: 1rem; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .blog-row-meta { font-size: .8rem; color: rgba(255,255,255,.45); }
+        .blog-row-actions { display: flex; gap: 8px; flex-shrink: 0; }
+        .badge-count {
+            background: rgba(167,139,250,.15); color: #a78bfa;
+            border: 1px solid rgba(167,139,250,.3);
+            border-radius: 6px; padding: 2px 8px; font-size: .75rem; font-weight: 600;
+        }
+        .alert-success { background:rgba(52,211,153,.15); border:1px solid rgba(52,211,153,.3); color:#34d399; border-radius:10px; }
+        .alert-danger { background:rgba(239,68,68,.15); border:1px solid rgba(239,68,68,.3); color:#f87171; border-radius:10px; }
+        .alert-info { background:rgba(96,165,250,.15); border:1px solid rgba(96,165,250,.3); color:#60a5fa; border-radius:10px; }
+        .empty-state { text-align:center; padding:60px 20px; }
+        .empty-icon { width:64px;height:64px;border-radius:50%;background:rgba(124,58,237,.15);border:2px dashed rgba(124,58,237,.3);display:flex;align-items:center;justify-content:center;font-size:1.6rem;color:#a78bfa;margin:0 auto 20px; }
+    </style>
+</head>
+<body>
+
+<div class="top-bar">
+    <a href="{{ url_for('index') }}" class="brand">
+        <i class="fas fa-layer-group me-2"></i>Blog Platform
+    </a>
+    <div class="d-flex gap-2 align-items-center">
+        <a href="{{ url_for('super_admin_create_blog') }}" class="btn-action">
+            <i class="fas fa-plus"></i> New Blog
+        </a>
+        <a href="{{ url_for('super_admin_change_credentials') }}" class="btn-outline-soft">
+            <i class="fas fa-user-shield"></i> Credentials
+        </a>
+        <a href="{{ url_for('super_admin_logout') }}" class="btn-outline-soft">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
+    </div>
+</div>
+
+<div class="content">
+    <div class="page-header animate__animated animate__fadeInDown">
+        <h1><i class="fas fa-tachometer-alt me-2" style="color:#a78bfa;"></i>Super Admin Dashboard</h1>
+        <p>Manage all blog instances across the platform</p>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ 'danger' if category == 'error' else category }} mb-3 animate__animated animate__fadeInDown">
+                <i class="fas fa-{{ 'times-circle' if category == 'error' else 'check-circle' if category == 'success' else 'info-circle' }} me-2"></i>{{ message }}
+            </div>
+        {% endfor %}
+    {% endwith %}
+
+    <div class="stats-row animate__animated animate__fadeIn">
+        <div class="stat-card">
+            <div class="stat-val">{{ blogs | length }}</div>
+            <div class="stat-lbl">Total Blogs</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-val">{{ blogs | map(attribute='post_count') | sum }}</div>
+            <div class="stat-lbl">Total Posts</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-val"><i class="fas fa-check-circle" style="font-size:1.4rem;color:#34d399;"></i></div>
+            <div class="stat-lbl">Platform Active</div>
+        </div>
+    </div>
+
+    <div class="section-title animate__animated animate__fadeIn">
+        <i class="fas fa-blog me-2"></i>All Blogs
+    </div>
+
+    {% if blogs %}
+        {% for blog in blogs %}
+        <div class="blog-row animate__animated animate__fadeInUp" style="animation-delay:{{ loop.index0 * 0.05 }}s">
+            <div class="blog-row-icon"><i class="fas fa-graduation-cap"></i></div>
+            <div class="blog-row-info">
+                <div class="blog-row-name">{{ blog.name }}</div>
+                <div class="blog-row-meta">
+                    <span class="me-3"><i class="fas fa-link me-1"></i>/{{ blog.id }}/</span>
+                    <span><i class="fas fa-calendar me-1"></i>{{ blog.created_at.strftime('%b %d, %Y') if blog.created_at else '—' }}</span>
+                </div>
+            </div>
+            <span class="badge-count me-2">{{ blog.post_count }} post{{ 's' if blog.post_count != 1 else '' }}</span>
+            <div class="blog-row-actions">
+                <a href="{{ url_for('blog_index', blog_id=blog.id) }}" class="btn-outline-soft" title="View Blog" target="_blank">
+                    <i class="fas fa-eye"></i> View
+                </a>
+                <a href="{{ url_for('blog_admin_dashboard', blog_id=blog.id) }}" class="btn-outline-soft" title="Blog Admin">
+                    <i class="fas fa-cog"></i> Admin
+                </a>
+                <a href="{{ url_for('super_admin_create_blog') }}?clone_from={{ blog.id }}" class="btn-outline-soft" title="Clone Blog">
+                    <i class="fas fa-copy"></i> Clone
+                </a>
+                <form method="POST" action="{{ url_for('super_admin_delete_blog', blog_id=blog.id) }}"
+                      onsubmit="return confirm('Delete blog \"{{ blog.name }}\"? This permanently removes ALL posts, settings, and admin credentials. This cannot be undone.')">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn-danger-soft" title="Delete Blog">
+                        <i class="fas fa-trash-alt"></i> Delete
+                    </button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="empty-state animate__animated animate__fadeIn">
+            <div class="empty-icon"><i class="fas fa-blog"></i></div>
+            <h4 style="color:rgba(255,255,255,.7); margin-bottom:10px;">No blogs yet</h4>
+            <p style="color:rgba(255,255,255,.4); margin-bottom:24px;">Create your first blog to get started.</p>
+            <a href="{{ url_for('super_admin_create_blog') }}" class="btn-action" style="font-size:.95rem; padding:10px 24px;">
+                <i class="fas fa-plus"></i> Create First Blog
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

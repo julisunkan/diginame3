@@ -1,0 +1,57 @@
+{% extends 'csvany/base.html' %}
+{% block title %}CSV-to-Anything Converter{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="hero-card p-4 mb-4 text-center">
+      <i class="bi bi-filetype-csv display-4 mb-2"></i>
+      <h1 class="h2 fw-bold mb-1">CSV-to-Anything Converter</h1>
+      <p class="mb-0 opacity-75">Upload a CSV and convert it to JSON, SQL, Excel, XML, YAML, Markdown, or TSV instantly.</p>
+    </div>
+
+    <div class="card p-4">
+      <h5 class="fw-semibold mb-3"><i class="bi bi-arrow-left-right me-2" style="color:#D97706"></i>Convert CSV</h5>
+      <form method="POST" action="{{ url_for('csvany.convert') }}" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <div class="mb-3">
+          <label class="form-label fw-medium">Select CSV file</label>
+          <input class="form-control form-control-lg" type="file" name="csvfile" accept=".csv" required/>
+          <div class="form-text">Only .csv files. Max 5 MB.</div>
+        </div>
+        <div class="mb-4">
+          <label class="form-label fw-medium">Output format</label>
+          <div class="row g-2">
+            {% set icons = {'json':'filetype-json','sql':'database','excel':'file-earmark-spreadsheet','xml':'code-slash','yaml':'file-code','markdown':'markdown','tsv':'grid-3x3'} %}
+            {% for fmt in formats %}
+            <div class="col-6 col-md-3">
+              <input type="radio" class="btn-check" name="format" id="fmt_{{ fmt }}" value="{{ fmt }}"
+                     {% if fmt == default_fmt %}checked{% endif %} autocomplete="off"/>
+              <label class="btn btn-outline-warning w-100 format-badge" for="fmt_{{ fmt }}">
+                <i class="bi bi-{{ icons.get(fmt, 'file') }} me-1"></i>{{ fmt.upper() }}
+              </label>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="d-grid">
+          <button type="submit" class="btn btn-brand btn-lg">
+            <i class="bi bi-lightning me-2"></i>Convert Now
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="row g-3 mt-2">
+      {% for label, icon, desc in [('JSON','filetype-json','Structured JSON array'),('SQL','database','INSERT statements'),('Excel','file-earmark-spreadsheet','.xlsx spreadsheet'),('XML','code-slash','XML document'),('YAML','file-code','YAML format'),('Markdown','markdown','Table format'),('TSV','grid-3x3','Tab-separated')] %}
+      <div class="col-6 col-md-3">
+        <div class="card p-2 text-center h-100">
+          <i class="bi bi-{{ icon }} fs-4 mb-1" style="color:#D97706"></i>
+          <div class="fw-semibold small">{{ label }}</div>
+          <div class="text-muted" style="font-size:.75rem">{{ desc }}</div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

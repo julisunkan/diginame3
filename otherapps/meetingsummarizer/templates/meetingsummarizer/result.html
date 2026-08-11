@@ -1,0 +1,55 @@
+{% extends 'meetingsummarizer/base.html' %}
+{% block title %}Meeting Summary{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="d-flex align-items-center gap-2 mb-3">
+      <a href="{{ url_for('meetingsummarizer.index') }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-left"></i> Back</a>
+      <h4 class="mb-0 fw-bold">Meeting Summary</h4>
+    </div>
+
+    {% if row['status'] == 'done' %}
+    <div class="card p-4 mb-3">
+      <div class="d-flex justify-content-between align-items-start mb-3">
+        <div>
+          <div class="fw-semibold">{{ row['original_name'] }}</div>
+          <small class="text-muted">{{ row['created_at'][:19].replace('T',' ') }} UTC</small>
+        </div>
+        <a href="{{ url_for('meetingsummarizer.download', uid=row['id']) }}" class="btn btn-brand">
+          <i class="bi bi-download me-1"></i> Download
+        </a>
+      </div>
+      <hr/>
+      {% if row['summary'] %}
+      <h6 class="fw-semibold text-uppercase small text-muted mb-2"><i class="bi bi-card-list me-1"></i>Summary</h6>
+      <div class="bg-light rounded p-3 mb-3" style="white-space:pre-wrap;font-size:.9rem">{{ row['summary'] }}</div>
+      {% endif %}
+      {% if row['transcript'] %}
+      <h6 class="fw-semibold text-uppercase small text-muted mb-2"><i class="bi bi-chat-text me-1"></i>Transcript (preview)</h6>
+      <pre class="bg-light rounded p-3" style="max-height:300px;overflow-y:auto;white-space:pre-wrap;font-size:.8rem">{{ row['transcript'] }}</pre>
+      {% endif %}
+      <hr class="my-4"/>
+      <h6 class="fw-semibold"><i class="bi bi-flag me-1"></i>Report this generated content</h6>
+      <p class="small text-muted">Report an issue with this AI-generated summary to the administrator.</p>
+      <form method="POST" action="{{ url_for('meetingsummarizer.report_content', uid=row['id']) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <div class="row g-2">
+          <div class="col-md-5"><select name="reason" class="form-select form-select-sm" required>
+            <option value="">Choose a reason</option><option value="inaccurate">Inaccurate or misleading</option>
+            <option value="harmful">Harmful or unsafe</option><option value="copyright">Copyright or privacy concern</option><option value="other">Other</option>
+          </select></div>
+          <div class="col-md-7"><input name="details" class="form-control form-control-sm" maxlength="2000" placeholder="Optional details"/></div>
+        </div>
+        <button class="btn btn-sm btn-outline-danger mt-2"><i class="bi bi-flag me-1"></i>Submit report</button>
+      </form>
+    </div>
+    {% elif row['status'] == 'removed' %}
+    <div class="alert alert-warning"><i class="bi bi-shield-exclamation me-2"></i>This generated item was removed after an administrator review.</div>
+    {% elif row['status'] == 'error' %}
+    <div class="alert alert-danger"><i class="bi bi-exclamation-triangle me-2"></i><strong>Failed:</strong> {{ row['error_msg'] }}</div>
+    {% else %}
+    <div class="alert alert-info"><i class="bi bi-hourglass-split me-2"></i>Processing…</div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

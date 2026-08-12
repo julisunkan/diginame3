@@ -3,7 +3,9 @@ Activity Book Generator  –  /otherapps/actibook
 Blueprint: actibook
 Generates word searches, Sudoku, crosswords & trivia in a PDF activity book.
 """
-import os, sqlite3, uuid, json, random, string
+import ast
+import json
+import os, re, sqlite3, uuid, random, string
 from datetime import datetime
 from functools import wraps
 from flask import (Blueprint, render_template, request, redirect, url_for,
@@ -214,24 +216,89 @@ def groq_trivia(theme, difficulty, api_key, model, count=10):
         raw = raw.split('\n', 1)[-1].rsplit('```', 1)[0].strip()
     return json.loads(raw)
 
+def _parse_json_response(raw):
+    """Parse JSON returned by an LLM, tolerating common harmless wrappers."""
+    if not isinstance(raw, str) or not raw.strip():
+        raise ValueError("The model returned an empty response.")
+
+    text = raw.strip()
+    if text.startswith('```'):
+        text = text.split('\n', 1)[-1].rsplit('```', 1)[0].strip()
+
+    # Decode the first JSON value so explanatory text after it does not break
+    # an otherwise valid response.
+    candidates = [text]
+    starts = [index for index in (text.find('['), text.find('{')) if index >= 0]
+    if starts:
+        candidates.append(text[min(starts):])
+
+    last_error = None
+    for candidate in candidates:
+        try:
+            return json.JSONDecoder().raw_decode(candidate)[0]
+        except (json.JSONDecodeError, TypeError) as exc:
+            last_error = exc
+        try:
+            # Some models return Python-style single-quoted lists/dicts even
+            # after being asked for JSON. literal_eval does not execute code.
+            return ast.literal_eval(candidate)
+        except (SyntaxError, ValueError, TypeError) as exc:
+            last_error = exc
+
+    raise ValueError(f"Invalid JSON response: {last_error}") from last_error
+
 def groq_crossword_clues(theme, difficulty, api_key, model, count=8):
     from groq import Groq
     client = Groq(api_key=api_key)
-    resp = client.chat.completions.create(
-        model=model,
-        messages=[
-            {"role": "system", "content": "Return only a valid JSON array. No extra text."},
+    messages = [
+        {"role": "system", "content":
+         'Return only strict JSON. Use double quotes for every key and string. '
+         'Do not use markdown fences or any text outside the JSON array.'},
+        {"role": "user", "content":
+         f'Generate {count} crossword clues about "{theme}" at {difficulty} level. '
+         'Return a JSON array of objects with exactly these keys: '
+         '"word" (5-10 uppercase letters, no spaces) and "clue" (string). '
+         'Example: [{"word":"PLANET","clue":"A world orbiting a star"}].'},
+    ]
+
+    def request_clues(request_messages, temperature):
+        response = client.chat.completions.create(
+            model=model,
+            messages=request_messages,
+            temperature=temperature,
+            max_tokens=800,
+        )
+        return response.choices[0].message.content
+
+    raw = request_clues(messages, 0.7)
+    try:
+        clues = _parse_json_response(raw)
+    except ValueError:
+        # Retry once because a malformed model response is recoverable, while
+        # keeping the existing caller-level fallback for API failures.
+        retry_messages = messages + [
             {"role": "user", "content":
-             f"Generate {count} crossword clues about '{theme}' at {difficulty} level. "
-             f"Return as JSON array of objects with keys: 'word' (5-10 uppercase letters, no spaces), 'clue' (string). "
-             f"Only return the JSON array."},
-        ],
-        temperature=0.7, max_tokens=800,
-    )
-    raw = resp.choices[0].message.content.strip()
-    if raw.startswith('```'):
-        raw = raw.split('\n', 1)[-1].rsplit('```', 1)[0].strip()
-    return json.loads(raw)
+             'Your previous response was not valid JSON. Return only a valid '
+             'JSON array now, with double-quoted keys and strings.'},
+        ]
+        clues = _parse_json_response(request_clues(retry_messages, 0))
+
+    if isinstance(clues, dict):
+        clues = clues.get('clues')
+    if not isinstance(clues, list):
+        raise ValueError("The model response did not contain a clue list.")
+
+    normalized = []
+    for item in clues:
+        if not isinstance(item, dict):
+            continue
+        word = re.sub(r'[^A-Za-z]', '', str(item.get('word', ''))).upper()
+        clue = str(item.get('clue', '')).strip()
+        if 5 <= len(word) <= 10 and clue:
+            normalized.append({'word': word, 'clue': clue})
+    if not normalized:
+        raise ValueError("The model response contained no usable crossword clues.")
+    return normalized[:count]
 
 def build_pdf(uid, theme, difficulty, pages, activities_data, api_key, model):
     from reportlab.lib.pagesizes import A4

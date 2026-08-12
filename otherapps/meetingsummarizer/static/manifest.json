@@ -1,6 +1,6 @@
 {
   "name": "AI Meeting Summarizer",
-  "short_name": "MeetSummarizer",
+  "short_name": "AI Meeting Summarizer",
   "description": "Upload meeting recordings and get AI-generated transcripts and summaries.",
   "start_url": "/otherapps/meetingsummarizer/",
   "scope": "/otherapps/meetingsummarizer/",

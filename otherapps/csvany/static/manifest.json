@@ -1,6 +1,6 @@
 {
   "name": "CSV-to-Anything Converter",
-  "short_name": "CSV Converter",
+  "short_name": "CSV-to-Anything Converter",
   "description": "Convert CSV files to JSON, SQL, Excel, XML, YAML, Markdown and more.",
   "start_url": "/otherapps/csvany/",
   "scope": "/otherapps/csvany/",

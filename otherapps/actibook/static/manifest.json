@@ -1,6 +1,6 @@
 {
-  "name": "Activity Book Generator",
-  "short_name": "ActiBook",
+  "name": "KDP Activity Book Generator",
+  "short_name": "KDP Activity Book Generator",
   "description": "Generate custom activity books with word searches, Sudoku, crosswords and trivia.",
   "start_url": "/otherapps/actibook/",
   "scope": "/otherapps/actibook/",

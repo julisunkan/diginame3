@@ -20,7 +20,7 @@
         <div class="mb-3">
           <label class="form-label fw-medium">Groq Model</label>
           <select class="form-select" name="groq_model">
-            {% for m in ['llama-3.1-8b-instant','openai/gpt-oss-20b','mixtral-8x7b-32768'] %}
+            {% for m in ['openai/gpt-oss-20b','openai/gpt-oss-20b','openai/gpt-oss-20b'] %}
             <option value="{{ m }}" {% if settings['groq_model']==m %}selected{% endif %}>{{ m }}</option>
             {% endfor %}
           </select>

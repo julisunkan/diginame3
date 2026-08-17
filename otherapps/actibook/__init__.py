@@ -72,7 +72,7 @@ def init_db():
             )
         defaults = {
             'groq_api_key': '',
-            'groq_model': 'llama-3.1-8b-instant',
+            'groq_model': 'openai/gpt-oss-20b',
             'max_pages': '20',
         }
         for k, v in defaults.items():
@@ -511,7 +511,7 @@ def generate():
     max_pages = int(get_setting('max_pages', '20'))
     pages     = min(pages, max_pages)
     api_key   = get_setting('groq_api_key')
-    model     = get_setting('groq_model', 'llama-3.1-8b-instant')
+    model     = get_setting('groq_model', 'openai/gpt-oss-20b')
 
     uid = str(uuid.uuid4())
     with get_db() as db:
@@ -675,7 +675,7 @@ def admin_settings():
         action = request.form.get('action')
         if action == 'api':
             set_setting('groq_api_key', request.form.get('groq_api_key', '').strip())
-            set_setting('groq_model',   request.form.get('groq_model', 'llama-3.1-8b-instant').strip())
+            set_setting('groq_model',   request.form.get('groq_model', 'openai/gpt-oss-20b').strip())
             set_setting('max_pages',    request.form.get('max_pages', '20').strip())
             flash('Settings saved.', 'success')
         elif action == 'password':
@@ -699,7 +699,7 @@ def admin_settings():
 
     settings = {
         'groq_api_key': get_setting('groq_api_key'),
-        'groq_model':   get_setting('groq_model', 'llama-3.1-8b-instant'),
+        'groq_model':   get_setting('groq_model', 'openai/gpt-oss-20b'),
         'max_pages':    get_setting('max_pages', '20'),
     }
     return render_template('actibook/admin/settings.html', settings=settings)

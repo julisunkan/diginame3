@@ -71,7 +71,7 @@ def init_db():
         # default settings
         defaults = {
             'groq_api_key': '',
-            'groq_model': 'llama-3.1-8b-instant',
+            'groq_model': 'openai/gpt-oss-20b',
             'format_style': 'professional',
         }
         for k, v in defaults.items():
@@ -359,7 +359,7 @@ def format_doc():
     try:
         raw_text = extract_text(up_path, ext)
         api_key  = get_setting('groq_api_key')
-        model    = get_setting('groq_model', 'llama-3.1-8b-instant')
+        model    = get_setting('groq_model', 'openai/gpt-oss-20b')
         style    = get_setting('format_style', 'professional')
 
         if api_key:
@@ -475,7 +475,7 @@ def admin_settings():
         action = request.form.get('action')
         if action == 'api':
             set_setting('groq_api_key', request.form.get('groq_api_key', '').strip())
-            set_setting('groq_model',   request.form.get('groq_model', 'llama-3.1-8b-instant').strip())
+            set_setting('groq_model',   request.form.get('groq_model', 'openai/gpt-oss-20b').strip())
             set_setting('format_style', request.form.get('format_style', 'professional').strip())
             flash('API settings saved.', 'success')
         elif action == 'password':
@@ -499,7 +499,7 @@ def admin_settings():
 
     settings = {
         'groq_api_key': get_setting('groq_api_key'),
-        'groq_model':   get_setting('groq_model', 'llama-3.1-8b-instant'),
+        'groq_model':   get_setting('groq_model', 'openai/gpt-oss-20b'),
         'format_style': get_setting('format_style', 'professional'),
     }
     return render_template('docsformatter/admin/settings.html', settings=settings)

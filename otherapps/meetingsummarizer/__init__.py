@@ -72,7 +72,7 @@ def init_db():
         defaults = {
             'groq_api_key': '',
             'whisper_model': 'whisper-large-v3',
-            'summary_model': 'llama-3.1-8b-instant',
+            'summary_model': 'openai/gpt-oss-20b',
             'summary_style': 'bullet-points',
         }
         for k, v in defaults.items():
@@ -185,7 +185,7 @@ def transcribe():
 
     try:
         whisper_model  = get_setting('whisper_model', 'whisper-large-v3')
-        summary_model  = get_setting('summary_model', 'llama-3.1-8b-instant')
+        summary_model  = get_setting('summary_model', 'openai/gpt-oss-20b')
         summary_style  = get_setting('summary_style', 'bullet-points')
 
         transcript = transcribe_audio(up_path, api_key, whisper_model)
@@ -293,7 +293,7 @@ def admin_settings():
         if action == 'api':
             set_setting('groq_api_key',   request.form.get('groq_api_key', '').strip())
             set_setting('whisper_model',  request.form.get('whisper_model', 'whisper-large-v3').strip())
-            set_setting('summary_model',  request.form.get('summary_model', 'llama-3.1-8b-instant').strip())
+            set_setting('summary_model',  request.form.get('summary_model', 'openai/gpt-oss-20b').strip())
             set_setting('summary_style',  request.form.get('summary_style', 'bullet-points').strip())
             flash('Settings saved.', 'success')
         elif action == 'password':
@@ -318,7 +318,7 @@ def admin_settings():
     settings = {
         'groq_api_key':  get_setting('groq_api_key'),
         'whisper_model': get_setting('whisper_model', 'whisper-large-v3'),
-        'summary_model': get_setting('summary_model', 'llama-3.1-8b-instant'),
+        'summary_model': get_setting('summary_model', 'openai/gpt-oss-20b'),
         'summary_style': get_setting('summary_style', 'bullet-points'),
     }
     return render_template('meetingsummarizer/admin/settings.html', settings=settings)
